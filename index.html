@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>保溫杯探究互動教程</title>
+  <meta name="description" content="國小自然科學保溫杯探究互動教程，透過材料比較、溫度資料、熱傳遞動畫與生活應用，引導學生設計更好的保溫裝置。">
+  <meta property="og:title" content="保溫杯探究互動教程">
+  <meta property="og:description" content="比較棉布、鋁箔紙、厚紙板與對照組的保溫效果，並設計更薄、更有效的保溫裝置。">
+  <meta property="og:type" content="website">
+  <style>
+    :root {
+      --bg: #f4f7f4;
+      --panel: #ffffff;
+      --panel-soft: #eef4f0;
+      --ink: #1c2420;
+      --muted: #5f6f68;
+      --line: #d8e1dc;
+      --green: #19735f;
+      --blue: #2f6f9f;
+      --red: #b5473d;
+      --gold: #9a6b20;
+      --shadow: 0 14px 34px rgba(28, 36, 32, .11);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    h1, h2, h3, p { margin-top: 0; }
+
+    .topbar {
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 8px clamp(14px, 3vw, 28px);
+      color: #fff;
+      background: #1b463d;
+      border-bottom: 1px solid rgba(255, 255, 255, .18);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-weight: 900;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #f6d36b;
+      color: #1b463d;
+      font-weight: 900;
+    }
+    .brand span:last-child {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: clamp(1.05rem, 2.5vw, 1.4rem);
+    }
+    .source-link {
+      flex-shrink: 0;
+      padding: 7px 10px;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .35);
+      border-radius: 8px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .tabbar {
+      height: 50px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-btn {
+      color: var(--muted);
+      background: #fff;
+      border: 0;
+      border-right: 1px solid var(--line);
+      font-weight: 900;
+    }
+    .nav-btn:last-child { border-right: 0; }
+    .nav-btn.active {
+      color: #fff;
+      background: var(--green);
+    }
+
+    .section {
+      display: none;
+      width: min(1240px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0 28px;
+    }
+    .section.active { display: block; }
+
+    #sec-observe.active {
+      display: flex !important;
+      flex-direction: column;
+      height: calc(100vh - 115px);
+      overflow: hidden;
+      gap: 10px;
+      padding: 12px 20px;
+    }
+    .obs-top { min-height: 0; }
+    .obj-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .objective {
+      min-height: 112px;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--green);
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(28, 36, 32, .07);
+    }
+    .objective strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+    .objective p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+    .obs-bottom {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      gap: 10px;
+    }
+    .card {
+      min-width: 0;
+      padding: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(28, 36, 32, .07);
+    }
+    #sec-observe .obs-bottom .card {
+      flex: 1;
+      overflow: hidden;
+    }
+    .card h2 {
+      margin-bottom: 10px;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+    .equip-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 7px;
+    }
+    .equip, .term {
+      padding: 8px 9px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-weight: 800;
+    }
+    .term-list {
+      display: grid;
+      gap: 8px;
+    }
+    .term span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: .86rem;
+      font-weight: 500;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(300px, .85fr) minmax(0, 1.15fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .panel-title h2 { margin-bottom: 0; font-size: 1.45rem; }
+    .badge {
+      padding: 4px 8px;
+      color: #fff;
+      background: var(--blue);
+      border-radius: 8px;
+      font-size: .83rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .step-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .step-list li {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 9px;
+      align-items: start;
+      padding: 10px;
+      background: #f9fbfa;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .step-list b {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--green);
+      border-radius: 8px;
+    }
+    .control-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .field {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .field input, .field select {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .segmented button {
+      min-height: 42px;
+      color: var(--muted);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-weight: 900;
+    }
+    .segmented button.active {
+      color: #fff;
+      background: var(--green);
+      border-color: var(--green);
+    }
+    .chart {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 56px;
+      gap: 8px;
+      align-items: center;
+      font-weight: 800;
+    }
+    .bar-track {
+      height: 28px;
+      overflow: hidden;
+      background: #e8eeeb;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+    }
+    .bar-fill {
+      width: 20%;
+      height: 100%;
+      background: var(--green);
+      transition: width .35s ease;
+    }
+    .result-note {
+      margin: 12px 0 0;
+      padding: 10px;
+      color: #183b33;
+      background: #e8f4ef;
+      border: 1px solid #c7ded5;
+      border-radius: 8px;
+      font-weight: 800;
+    }
+    canvas {
+      width: 100%;
+      min-width: 0;
+      height: 340px;
+      display: block;
+      background: #f8fbfb;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .canvas-wrap { min-width: 0; }
+    .principle-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .mini {
+      padding: 10px;
+      background: #f9fbfa;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .mini strong { display: block; margin-bottom: 4px; }
+    .mini p { margin-bottom: 0; color: var(--muted); font-size: .92rem; }
+
+    .life-layout {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr);
+      gap: 12px;
+      min-height: 520px;
+    }
+    .life-tab-list {
+      overflow: hidden;
+      min-width: 90px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 6px 5px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .life-tab-btn {
+      flex: 1;
+      min-height: 0;
+      padding: 8px;
+      color: var(--muted);
+      background: #f9fbfa;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: .86rem;
+      font-weight: 900;
+    }
+    .life-tab-btn.active {
+      color: #fff;
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+    .life-visual {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 12px;
+    }
+    .large-icon {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, #1b463d, #2f6f9f);
+      border-radius: 8px;
+      font-size: 5rem;
+      font-weight: 900;
+    }
+    .design-board {
+      display: grid;
+      gap: 10px;
+    }
+    .score {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      background: #f9fbfa;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .meter {
+      height: 12px;
+      overflow: hidden;
+      background: #e8eeeb;
+      border-radius: 999px;
+    }
+    .meter span {
+      display: block;
+      height: 100%;
+      width: 50%;
+      background: var(--gold);
+      transition: width .35s ease;
+    }
+
+    @media (max-width: 860px) {
+      .topbar { height: auto; min-height: 65px; }
+      .source-link { display: none; }
+      #sec-observe.active {
+        height: auto;
+        min-height: calc(100vh - 115px);
+        overflow: visible;
+        padding-inline: 12px;
+      }
+      .obj-grid, .principle-grid { grid-template-columns: repeat(2, 1fr); }
+      .obs-bottom, .layout, .life-visual { grid-template-columns: 1fr; display: grid; }
+      .life-layout { grid-template-columns: 1fr; min-height: 0; }
+      .life-tab-list { min-height: 250px; }
+    }
+    @media (max-width: 560px) {
+      .tabbar { grid-template-columns: repeat(2, 1fr); height: auto; }
+      .nav-btn { min-height: 46px; border-bottom: 1px solid var(--line); }
+      .section { width: min(100% - 18px, 1240px); }
+      .obj-grid, .equip-grid, .control-row, .principle-grid { grid-template-columns: 1fr; }
+      .objective { min-height: 0; }
+      .bar-row { grid-template-columns: 62px 1fr 48px; font-size: .9rem; }
+      canvas { height: 300px; }
+    }
+  </style>
+</head>
+<body data-active-tab="sec-observe">
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="保溫杯探究首頁">
+      <span class="brand-mark" aria-hidden="true">熱</span>
+      <span>保溫杯探究</span>
+    </a>
+    <a class="source-link" href="https://www.youtube.com/watch?v=zrf_fhEwAqQ" target="_blank" rel="noopener noreferrer">教學影片</a>
+  </header>
+
+  <nav class="tabbar" aria-label="教材頁籤">
+    <button class="nav-btn active" data-target="sec-observe" type="button">觀察站</button>
+    <button class="nav-btn" data-target="sec-demo" type="button">實驗示範</button>
+    <button class="nav-btn" data-target="sec-principle" type="button">原理小教室</button>
+    <button class="nav-btn" data-target="sec-life" type="button">生活應用</button>
+  </nav>
+
+  <main>
+    <section id="sec-observe" class="section active" aria-labelledby="observeTitle">
+      <div class="obs-top">
+        <div class="panel-title">
+          <h1 id="observeTitle">先想一想：什麼材料能讓水溫變化最慢？</h1>
+          <span class="badge">探究任務</span>
+        </div>
+        <div class="obj-grid">
+          <article class="objective">
+            <strong>辨認控制變因</strong>
+            <p>四個容器要一樣，改變的只有外層包覆材料。</p>
+          </article>
+          <article class="objective">
+            <strong>讀取溫度資料</strong>
+            <p>比較 20 分鐘或 30 分鐘前後的溫度差。</p>
+          </article>
+          <article class="objective">
+            <strong>解釋保溫效果</strong>
+            <p>溫度差越小，代表熱量交換越慢。</p>
+          </article>
+          <article class="objective">
+            <strong>設計更好保溫杯</strong>
+            <p>效果相近時，厚度越薄、越方便使用的設計越佳。</p>
+          </article>
+        </div>
+      </div>
+      <div class="obs-bottom">
+        <article class="card">
+          <h2>實驗器材</h2>
+          <div class="equip-grid">
+            <div class="equip">厚紙板</div>
+            <div class="equip">棉布</div>
+            <div class="equip">鋁箔紙</div>
+            <div class="equip">寶特瓶數個</div>
+            <div class="equip">橡皮筋</div>
+            <div class="equip">漏斗</div>
+            <div class="equip">電子式溫度計</div>
+            <div class="equip">燒杯與蓋子</div>
+          </div>
+        </article>
+        <article class="card">
+          <h2>重要詞彙</h2>
+          <div class="term-list">
+            <div class="term">對照組<span>不包覆材料，用來和其他組比較。</span></div>
+            <div class="term">溫度差<span>初溫和末溫相差多少，判斷熱交換快慢。</span></div>
+            <div class="term">保溫效果<span>讓熱水降溫慢，或讓冰水升溫慢的能力。</span></div>
+            <div class="term">熱傳遞<span>熱會從溫度高的地方移向溫度低的地方。</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="sec-demo" class="section" aria-labelledby="demoTitle">
+      <div class="layout">
+        <article class="card">
+          <div class="panel-title">
+            <h2 id="demoTitle">實驗示範</h2>
+            <span class="badge">資料比較</span>
+          </div>
+          <div class="segmented" role="group" aria-label="選擇實驗">
+            <button id="modeHot" class="active" type="button">熱水降溫</button>
+            <button id="modeCold" type="button">冰水升溫</button>
+          </div>
+          <ol class="step-list">
+            <li><b>1</b><span>準備四個相同容器：不包覆、包棉布、包鋁箔紙、包厚紙板。</span></li>
+            <li><b>2</b><span>加入相同水量，熱水實驗用 80 度熱水，冰水實驗用約 6.2 度冰水。</span></li>
+            <li><b>3</b><span>經過固定時間後量測溫度，計算每組溫度差。</span></li>
+            <li><b>4</b><span>找出溫度差最小的組別，討論它為什麼保溫效果較好。</span></li>
+          </ol>
+          <p id="demoConclusion" class="result-note"></p>
+        </article>
+
+        <article class="card">
+          <div class="panel-title">
+            <h2>溫度差圖表</h2>
+            <span id="timeBadge" class="badge">20 分鐘</span>
+          </div>
+          <div id="chart" class="chart" aria-live="polite"></div>
+          <div class="control-row" style="margin-top: 14px;">
+            <label class="field">自訂材料
+              <select id="customMaterial">
+                <option value="cotton">棉布</option>
+                <option value="foil">鋁箔紙</option>
+                <option value="cardboard">厚紙板</option>
+                <option value="air">空氣層</option>
+              </select>
+            </label>
+            <label class="field">包覆層數
+              <input id="layerInput" type="range" min="1" max="4" value="2">
+            </label>
+          </div>
+          <p id="designFeedback" class="result-note"></p>
+        </article>
+      </div>
+    </section>
+
+    <section id="sec-principle" class="section" aria-labelledby="principleTitle">
+      <div class="layout">
+        <article class="card">
+          <div class="panel-title">
+            <h2 id="principleTitle">原理小教室</h2>
+            <span class="badge">熱傳遞模型</span>
+          </div>
+          <div class="control-row">
+            <label class="field">材料
+              <select id="principleMaterial">
+                <option value="cotton">棉布：保留空氣層</option>
+                <option value="foil">鋁箔紙：反射熱輻射</option>
+                <option value="cardboard">厚紙板：阻隔部分傳導</option>
+                <option value="none">不包覆：熱交換最快</option>
+              </select>
+            </label>
+            <label class="field">外層厚度
+              <input id="thicknessInput" type="range" min="1" max="5" value="3">
+            </label>
+          </div>
+          <div class="principle-grid">
+            <div class="mini"><strong>傳導</strong><p>熱沿著接觸的物質移動，材料越容易導熱，散熱越快。</p></div>
+            <div class="mini"><strong>對流</strong><p>空氣或水流動會帶走熱量，蓋子與包覆能減少流動。</p></div>
+            <div class="mini"><strong>輻射</strong><p>物體會向外放出熱，亮面的鋁箔能反射一部分熱輻射。</p></div>
+          </div>
+          <p id="principleText" class="result-note"></p>
+        </article>
+        <article class="card canvas-wrap">
+          <canvas id="heatCanvas" width="760" height="420" aria-label="熱傳遞動畫"></canvas>
+        </article>
+      </div>
+    </section>
+
+    <section id="sec-life" class="section" aria-labelledby="lifeTitle">
+      <div class="panel-title">
+        <h2 id="lifeTitle">生活應用：哪裡也需要保溫或隔熱？</h2>
+        <span class="badge">應用探索</span>
+      </div>
+      <div class="life-layout">
+        <div id="lifeTabs" class="life-tab-list" role="tablist" aria-label="生活應用分類"></div>
+        <div class="life-visual">
+          <article class="card">
+            <div id="lifeIcon" class="large-icon" aria-hidden="true">杯</div>
+            <h3 id="lifeName"></h3>
+            <p id="lifeText"></p>
+            <p id="lifeQuestion" class="result-note"></p>
+          </article>
+          <article class="card design-board">
+            <h3>我的保溫杯設計評估</h3>
+            <label class="field">材料選擇
+              <select id="designMaterial">
+                <option value="cotton">棉布</option>
+                <option value="foil">鋁箔紙</option>
+                <option value="cardboard">厚紙板</option>
+                <option value="mixed">棉布加鋁箔</option>
+              </select>
+            </label>
+            <label class="field">厚度要求
+              <input id="designThickness" type="range" min="1" max="5" value="2">
+            </label>
+            <label class="field">方便攜帶
+              <input id="designPortability" type="range" min="1" max="5" value="4">
+            </label>
+            <div class="score">
+              <strong>綜合分數 <span id="designScore">0</span></strong>
+              <div class="meter"><span id="scoreMeter"></span></div>
+            </div>
+            <p id="designAdvice" class="result-note"></p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const materialLabels = {
+      none: "不包覆",
+      cotton: "棉布",
+      foil: "鋁箔紙",
+      cardboard: "厚紙板",
+      air: "空氣層",
+      mixed: "棉布加鋁箔"
+    };
+    const datasets = {
+      hot: {
+        time: "20 分鐘",
+        initial: 80,
+        unit: "度",
+        title: "熱水降溫",
+        rows: [
+          { key: "none", label: "不包覆", final: 56.4, diff: 23.6, color: "#b5473d" },
+          { key: "cotton", label: "棉布", final: 61.8, diff: 18.2, color: "#19735f" },
+          { key: "foil", label: "鋁箔紙", final: 59.3, diff: 20.7, color: "#2f6f9f" },
+          { key: "cardboard", label: "厚紙板", final: 59.3, diff: 20.7, color: "#9a6b20" }
+        ]
+      },
+      cold: {
+        time: "30 分鐘",
+        initial: 6.2,
+        unit: "度",
+        title: "冰水升溫",
+        rows: [
+          { key: "none", label: "不包覆", final: 13.1, diff: 6.9, color: "#b5473d" },
+          { key: "cotton", label: "棉布", final: 10.8, diff: 4.6, color: "#19735f" },
+          { key: "foil", label: "鋁箔紙", final: 12.5, diff: 6.3, color: "#2f6f9f" },
+          { key: "cardboard", label: "厚紙板", final: 11.9, diff: 5.7, color: "#9a6b20" }
+        ]
+      }
+    };
+    const lifeItems = [
+      { name: "保溫杯", icon: "杯", text: "雙層杯壁、空氣層或真空層可以減少熱傳導與對流，讓飲料溫度變化較慢。", q: "如果要讓杯子更輕，你會先減少哪一層材料？" },
+      { name: "便當袋", icon: "袋", text: "柔軟布料與鋁箔內襯常一起使用，兼顧隔熱、反射與攜帶方便。", q: "保冷和保熱需要考慮的原理相同嗎？" },
+      { name: "建築隔熱", icon: "屋", text: "牆壁、屋頂隔熱材能降低室內外熱交換，減少冷氣或暖氣消耗。", q: "為什麼頂樓教室常比低樓層更熱？" },
+      { name: "救生毯", icon: "毯", text: "亮面薄膜能反射身體熱輻射，即使很薄也能降低熱量流失。", q: "薄薄一層為什麼也可能有效？" },
+      { name: "冰桶", icon: "冰", text: "厚壁、蓋子與少開蓋都能減少外界熱進入，延長冰塊融化時間。", q: "打開蓋子的次數會如何影響保冷？" },
+      { name: "外送保溫箱", icon: "箱", text: "泡棉與密合箱蓋可減少食物與外界空氣交換，維持餐點溫度。", q: "保溫箱太厚時會帶來什麼使用問題？" }
+    ];
+
+    let activeMode = "hot";
+    let activeLife = 0;
+
+    const animControllers = {};
+    const chart = document.querySelector("#chart");
+    const conclusion = document.querySelector("#demoConclusion");
+    const timeBadge = document.querySelector("#timeBadge");
+
+    function renderChart() {
+      const data = datasets[activeMode];
+      const max = Math.max(...data.rows.map(row => row.diff));
+      chart.replaceChildren(...data.rows.map(row => {
+        const wrap = document.createElement("div");
+        wrap.className = "bar-row";
+        wrap.innerHTML = `
+          <span>${row.label}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${(row.diff / max) * 100}%;background:${row.color}"></div></div>
+          <span>${row.diff.toFixed(1)}</span>
+        `;
+        return wrap;
+      }));
+      const best = data.rows.reduce((a, b) => a.diff < b.diff ? a : b);
+      timeBadge.textContent = data.time;
+      conclusion.textContent = `${data.title}結果：${best.label}的溫度差最小，所以保溫效果最佳。`;
+      updateDesignFeedback();
+    }
+
+    function updateDesignFeedback() {
+      const material = document.querySelector("#customMaterial").value;
+      const layers = Number(document.querySelector("#layerInput").value);
+      const base = { cotton: 86, foil: 72, cardboard: 70, air: 68 }[material];
+      const score = Math.min(98, base + layers * 4);
+      const burden = layers >= 4 ? "但層數太多可能變厚、不好拿" : "厚度仍算容易操作";
+      document.querySelector("#designFeedback").textContent =
+        `${materialLabels[material]}包覆 ${layers} 層，預估保溫能力約 ${score} 分，${burden}。`;
+    }
+
+    function setMode(mode) {
+      activeMode = mode;
+      document.querySelector("#modeHot").classList.toggle("active", mode === "hot");
+      document.querySelector("#modeCold").classList.toggle("active", mode === "cold");
+      renderChart();
+    }
+
+    function renderLifeTabs() {
+      const tabs = lifeItems.map((item, index) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "life-tab-btn";
+        btn.textContent = item.name;
+        btn.setAttribute("role", "tab");
+        btn.setAttribute("aria-selected", String(index === activeLife));
+        btn.addEventListener("click", () => {
+          activeLife = index;
+          renderLife();
+        });
+        return btn;
+      });
+      document.querySelector("#lifeTabs").replaceChildren(...tabs);
+    }
+
+    function renderLife() {
+      const item = lifeItems[activeLife];
+      document.querySelectorAll(".life-tab-btn").forEach((btn, index) => {
+        btn.classList.toggle("active", index === activeLife);
+        btn.setAttribute("aria-selected", String(index === activeLife));
+      });
+      document.querySelector("#lifeIcon").textContent = item.icon;
+      document.querySelector("#lifeName").textContent = item.name;
+      document.querySelector("#lifeText").textContent = item.text;
+      document.querySelector("#lifeQuestion").textContent = item.q;
+    }
+
+    function updateDesignScore() {
+      const material = document.querySelector("#designMaterial").value;
+      const thickness = Number(document.querySelector("#designThickness").value);
+      const portability = Number(document.querySelector("#designPortability").value);
+      const materialScore = { cotton: 78, foil: 68, cardboard: 62, mixed: 88 }[material];
+      const score = Math.round(materialScore + thickness * 5 + portability * 4 - Math.max(0, thickness - 2) * 5);
+      const capped = Math.max(20, Math.min(100, score));
+      document.querySelector("#designScore").textContent = capped;
+      document.querySelector("#scoreMeter").style.width = `${capped}%`;
+      document.querySelector("#designAdvice").textContent =
+        capped >= 86 ? "這是很有競爭力的設計；下一步可以用實測溫度差驗證。" :
+        capped >= 70 ? "設計可行，試著在保溫效果和厚度之間再取得平衡。" :
+        "目前可能散熱較快或不方便攜帶，建議調整材料組合。";
+    }
+
+    function drawArrow(ctx, x1, y1, x2, y2, color, width = 3) {
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - 12 * Math.cos(angle - .4), y2 - 12 * Math.sin(angle - .4));
+      ctx.lineTo(x2 - 12 * Math.cos(angle + .4), y2 - 12 * Math.sin(angle + .4));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    (function () {
+      const canvas = document.querySelector("#heatCanvas");
+      const ctx = canvas.getContext("2d");
+      let animId = 0;
+      let t = 0;
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = Math.max(320, Math.round(rect.width * ratio));
+        canvas.height = Math.max(260, Math.round(rect.height * ratio));
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      }
+
+      function draw() {
+        resizeCanvas();
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        const material = document.querySelector("#principleMaterial").value;
+        const thickness = Number(document.querySelector("#thicknessInput").value);
+        const strength = { none: 1, cardboard: .62, foil: .55, cotton: .38 }[material] / (1 + thickness * .09);
+        const cx = w * .5;
+        const top = h * .16;
+        const cupW = Math.min(170, w * .32);
+        const cupH = h * .52;
+        t += .018;
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = "#f8fbfb";
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.fillStyle = "#d7edf5";
+        ctx.fillRect(cx - cupW / 2, top + cupH * .35, cupW, cupH * .52);
+        ctx.strokeStyle = "#1b463d";
+        ctx.lineWidth = 5;
+        ctx.strokeRect(cx - cupW / 2, top, cupW, cupH);
+        ctx.lineWidth = Math.max(8, thickness * 7);
+        ctx.strokeStyle = material === "none" ? "#cfd8d3" : material === "cotton" ? "#7dbb91" : material === "foil" ? "#9ab7c9" : "#c49a55";
+        ctx.strokeRect(cx - cupW / 2 - 22, top - 10, cupW + 44, cupH + 20);
+
+        ctx.fillStyle = "#b5473d";
+        ctx.font = "800 17px Microsoft JhengHei, sans-serif";
+        ctx.fillText("熱水", cx - 18, top + cupH * .65);
+        ctx.fillStyle = "#5f6f68";
+        ctx.fillText(materialLabels[material], 20, 30);
+
+        const arrows = 8;
+        for (let i = 0; i < arrows; i += 1) {
+          const phase = t + i * .75;
+          const side = i % 2 === 0 ? -1 : 1;
+          const y = top + 34 + (i % 4) * (cupH / 4);
+          const startX = cx + side * (cupW / 2 + 8);
+          const endX = startX + side * (42 + Math.sin(phase) * 14) * strength;
+          drawArrow(ctx, startX, y, endX, y + Math.sin(phase) * 6, "#b5473d", 2 + strength * 3);
+        }
+        for (let i = 0; i < 28; i += 1) {
+          const x = cx - cupW * .35 + (i % 7) * cupW * .12;
+          const y = top + cupH * .38 + ((i / 7) | 0) * 28 + Math.sin(t * 3 + i) * 4;
+          ctx.fillStyle = `rgba(181, 71, 61, ${.25 + strength * .35})`;
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        document.querySelector("#principleText").textContent =
+          `目前模型顯示：${materialLabels[material]}外層厚度 ${thickness}，紅色箭頭越短代表熱量散失越慢。`;
+        animId = requestAnimationFrame(draw);
+      }
+
+      animControllers["sec-principle"] = {
+        start: () => {
+          cancelAnimationFrame(animId);
+          draw();
+        },
+        cancel: () => cancelAnimationFrame(animId)
+      };
+      window.addEventListener("resize", () => {
+        if (document.body.dataset.activeTab === "sec-principle") draw();
+      });
+      draw();
+      cancelAnimationFrame(animId);
+    })();
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+        btn.classList.add("active");
+        const target = btn.dataset.target;
+        document.querySelector(`#${target}`).classList.add("active");
+        document.body.dataset.activeTab = target;
+        Object.values(animControllers).forEach(controller => controller && controller.cancel && controller.cancel());
+        if (animControllers[target]) animControllers[target].start();
+      });
+    });
+
+    document.querySelector("#modeHot").addEventListener("click", () => setMode("hot"));
+    document.querySelector("#modeCold").addEventListener("click", () => setMode("cold"));
+    document.querySelector("#customMaterial").addEventListener("change", updateDesignFeedback);
+    document.querySelector("#layerInput").addEventListener("input", updateDesignFeedback);
+    document.querySelector("#principleMaterial").addEventListener("change", () => {
+      if (document.body.dataset.activeTab === "sec-principle") animControllers["sec-principle"].start();
+    });
+    document.querySelector("#thicknessInput").addEventListener("input", () => {
+      if (document.body.dataset.activeTab === "sec-principle") animControllers["sec-principle"].start();
+    });
+    ["#designMaterial", "#designThickness", "#designPortability"].forEach(selector => {
+      document.querySelector(selector).addEventListener("input", updateDesignScore);
+    });
+
+    renderChart();
+    renderLifeTabs();
+    renderLife();
+    updateDesignScore();
+  </script>
+</body>
+</html>
