@@ -1303,21 +1303,91 @@
       }
 
       function drawCooler(w, h) {
-        const x = w * .2, y = h * .34, cw = w * .5, ch = h * .42;
-        ctx.fillStyle = "#d7edf5";
+        const x = w * .18;
+        const y = h * .34;
+        const cw = w * .5;
+        const ch = h * .42;
+        const lidGap = 4 + Math.max(0, Math.sin(t * 1.6)) * 8;
+
+        const outsideGrad = ctx.createLinearGradient(x + cw + 30, 0, w, 0);
+        outsideGrad.addColorStop(0, "rgba(216, 93, 42, .05)");
+        outsideGrad.addColorStop(1, "rgba(216, 93, 42, .26)");
+        ctx.fillStyle = outsideGrad;
+        ctx.fillRect(x + cw + 26, y - 34, w - (x + cw + 26), ch + 82);
+
+        ctx.fillStyle = "#eef8fb";
         ctx.fillRect(x, y, cw, ch);
         ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 12;
-        ctx.strokeRect(x, y, cw, ch);
+        ctx.lineWidth = 22;
+        ctx.strokeRect(x + 4, y + 4, cw - 8, ch - 8);
+        ctx.strokeStyle = "#8ecae6";
+        ctx.lineWidth = 8;
+        ctx.strokeRect(x + 20, y + 22, cw - 40, ch - 44);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x - 10, y - 30 - lidGap, cw + 20, 28);
+        ctx.strokeStyle = "#8ecae6";
+        ctx.lineWidth = 6;
+        ctx.strokeRect(x - 10, y - 30 - lidGap, cw + 20, 28);
+        ctx.fillStyle = "#d7edf5";
+        ctx.fillRect(x + 34, y + 34, cw - 68, ch - 62);
+
+        for (let i = 0; i < 7; i += 1) {
+          const yy = y + 12 + i * (ch - 24) / 6;
+          const wobble = Math.sin(t * 4 + i) * 8;
+          drawArrow(ctx, x + cw + 112 + wobble, yy, x + cw + 22, yy + Math.sin(t * 2 + i) * 5, "#ffd46a", 4);
+        }
+
+        ctx.setLineDash([8, 8]);
+        ctx.strokeStyle = "rgba(255, 212, 106, .9)";
+        ctx.lineWidth = 3;
+        for (let i = 0; i < 5; i += 1) {
+          const yy = y + 24 + i * 24;
+          ctx.beginPath();
+          ctx.moveTo(x + cw + 14, yy);
+          ctx.lineTo(x + cw - 58, yy + Math.sin(t * 3 + i) * 6);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+
+        for (let i = 0; i < 5; i += 1) {
+          const yy = y + 34 + i * 21;
+          drawArrow(ctx, x + cw - 62, yy, x + cw - 106, yy + Math.sin(t * 2.2 + i) * 3, "rgba(255, 212, 106, .32)", 2);
+        }
+
         ctx.fillStyle = "#2f6f9f";
-        for (let i = 0; i < 5; i += 1) {
-          ctx.fillRect(x + 34 + i * 42, y + ch * .52 + Math.sin(t * 3 + i) * 4, 30, 26);
+        for (let i = 0; i < 6; i += 1) {
+          const ix = x + 46 + i * 36;
+          const iy = y + ch * .5 + Math.sin(t * 2.4 + i) * 3;
+          ctx.save();
+          ctx.translate(ix, iy);
+          ctx.rotate(Math.sin(t + i) * .08);
+          ctx.fillRect(-14, -13, 28, 26);
+          ctx.fillStyle = "rgba(255,255,255,.35)";
+          ctx.fillRect(-9, -8, 10, 8);
+          ctx.restore();
+          ctx.fillStyle = "#2f6f9f";
         }
-        for (let i = 0; i < 5; i += 1) {
-          drawArrow(ctx, x + cw + 70, y + 24 + i * 24, x + cw + 18, y + 28 + i * 20, "#ffd46a", 3);
+
+        for (let i = 0; i < 10; i += 1) {
+          ctx.fillStyle = `rgba(220,245,255,${.45 + .2 * Math.sin(t * 3 + i)})`;
+          ctx.beginPath();
+          ctx.arc(x + 34 + (i * 31) % (cw - 68), y + 28 + (i * 19) % (ch - 56), 2.5, 0, Math.PI * 2);
+          ctx.fill();
         }
-        label("厚壁阻擋外界熱進入", w * .08, h * .15);
-        label("少開蓋，冰塊融化較慢", w * .44, h * .84);
+
+        const melt = 4 + Math.sin(t * 1.4) * 2;
+        ctx.fillStyle = "rgba(47,111,159,.25)";
+        ctx.beginPath();
+        ctx.ellipse(x + cw * .52, y + ch - 30, 72 + melt, 9 + melt * .3, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "900 15px Microsoft JhengHei, sans-serif";
+        ctx.fillText("厚泡棉壁", x + 18, y + 28);
+        ctx.fillText("冷空氣留在內部", x + 48, y + ch - 22);
+        label("外界熱被厚壁大幅阻擋", w * .07, h * .15);
+        label("少量熱穿透，冰塊融化變慢", w * .42, h * .84);
       }
 
       function drawDelivery(w, h) {
