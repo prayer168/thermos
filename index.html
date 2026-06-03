@@ -30,7 +30,9 @@
       font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
       color: var(--ink);
       background: var(--bg);
-      line-height: 1.55;
+      font-size: 18px;
+      line-height: 1.48;
+      overflow: hidden;
     }
     button, input, select { font: inherit; }
     button { cursor: pointer; }
@@ -85,7 +87,7 @@
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      font-size: clamp(1.05rem, 2.5vw, 1.4rem);
+      font-size: clamp(1.35rem, 2.8vw, 1.75rem);
     }
     .source-link {
       flex-shrink: 0;
@@ -110,6 +112,7 @@
       background: #fff;
       border: 0;
       border-right: 1px solid var(--line);
+      font-size: clamp(.98rem, 1.35vw, 1.22rem);
       font-weight: 900;
     }
     .nav-btn:last-child { border-right: 0; }
@@ -120,11 +123,15 @@
 
     .section {
       display: none;
-      width: min(1240px, calc(100% - 28px));
+      width: min(1480px, calc(100% - 18px));
       margin: 0 auto;
-      padding: 18px 0 28px;
+      padding: 12px 0;
     }
-    .section.active { display: block; }
+    .section.active {
+      display: block;
+      height: calc(100vh - 115px);
+      overflow: hidden;
+    }
 
     #sec-observe.active {
       display: flex !important;
@@ -132,7 +139,7 @@
       height: calc(100vh - 115px);
       overflow: hidden;
       gap: 10px;
-      padding: 12px 20px;
+      padding: 12px 9px;
     }
     .obs-top { min-height: 0; }
     .obj-grid {
@@ -143,8 +150,8 @@
     .objective {
       position: relative;
       overflow: hidden;
-      min-height: 112px;
-      padding: 12px;
+      min-height: 132px;
+      padding: 18px;
       background: var(--panel);
       border: 1px solid var(--line);
       border-top: 5px solid var(--green);
@@ -154,9 +161,9 @@
     .objective::after {
       content: "";
       position: absolute;
-      inset: auto -30px -38px auto;
-      width: 92px;
-      height: 92px;
+      inset: auto 8px -34px auto;
+      width: 76px;
+      height: 76px;
       background: rgba(25, 115, 95, .11);
       border-radius: 999px;
       animation: cardBubble 4.8s ease-in-out infinite;
@@ -177,12 +184,12 @@
     .objective strong {
       display: block;
       margin-bottom: 6px;
-      font-size: 1rem;
+      font-size: 1.18rem;
     }
     .objective p {
       margin-bottom: 0;
       color: var(--muted);
-      font-size: .92rem;
+      font-size: 1.02rem;
     }
     .obs-bottom {
       flex: 1;
@@ -192,7 +199,7 @@
     }
     .card {
       min-width: 0;
-      padding: 14px;
+      padding: 18px;
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -204,7 +211,7 @@
     }
     .card h2 {
       margin-bottom: 10px;
-      font-size: 1.25rem;
+      font-size: 1.52rem;
       line-height: 1.2;
     }
     .equip-grid {
@@ -213,7 +220,7 @@
       gap: 7px;
     }
     .equip, .term {
-      padding: 8px 9px;
+      padding: 11px 12px;
       background: var(--panel-soft);
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -221,13 +228,14 @@
     }
     .term-list {
       display: grid;
-      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
     }
     .term span {
       display: block;
       margin-top: 2px;
       color: var(--muted);
-      font-size: .86rem;
+      font-size: .98rem;
       font-weight: 500;
     }
 
@@ -236,6 +244,13 @@
       grid-template-columns: minmax(300px, .85fr) minmax(0, 1.15fr);
       gap: 14px;
       align-items: stretch;
+      height: 100%;
+    }
+    .layout > .card,
+    .quiz-layout > .card,
+    .life-visual > .card {
+      min-height: 0;
+      overflow: hidden;
     }
     .panel-title {
       display: flex;
@@ -244,7 +259,7 @@
       gap: 12px;
       margin-bottom: 12px;
     }
-    .panel-title h2 { margin-bottom: 0; font-size: 1.45rem; }
+    .panel-title h2 { margin-bottom: 0; font-size: 1.78rem; }
     .badge {
       padding: 4px 8px;
       color: #fff;
@@ -266,7 +281,7 @@
       grid-template-columns: 30px 1fr;
       gap: 9px;
       align-items: start;
-      padding: 10px;
+      padding: 9px 10px;
       background: #f9fbfa;
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -291,6 +306,7 @@
       gap: 6px;
       color: var(--muted);
       font-weight: 800;
+      font-size: 1.06rem;
     }
     .field input, .field select {
       width: 100%;
@@ -314,6 +330,7 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       font-weight: 900;
+      font-size: 1.08rem;
     }
     .segmented button.active {
       color: #fff;
@@ -330,6 +347,7 @@
       grid-template-columns: 72px 1fr 56px;
       gap: 8px;
       align-items: center;
+      font-size: 1.04rem;
       font-weight: 800;
     }
     .bar-track {
@@ -353,6 +371,7 @@
       border: 1px solid #c7ded5;
       border-radius: 8px;
       font-weight: 800;
+      font-size: 1.05rem;
     }
     canvas {
       width: 100%;
@@ -364,7 +383,7 @@
       border-radius: 8px;
     }
     .demo-canvas {
-      height: 210px;
+      height: min(25vh, 210px);
       margin-bottom: 12px;
     }
     .canvas-wrap { min-width: 0; }
@@ -381,13 +400,14 @@
       border-radius: 8px;
     }
     .mini strong { display: block; margin-bottom: 4px; }
-    .mini p { margin-bottom: 0; color: var(--muted); font-size: .92rem; }
+    .mini p { margin-bottom: 0; color: var(--muted); font-size: 1.02rem; }
 
     .life-layout {
       display: grid;
-      grid-template-columns: 160px minmax(0, 1fr);
+      grid-template-columns: 190px minmax(0, 1fr);
       gap: 12px;
-      min-height: 520px;
+      height: calc(100% - 58px);
+      min-height: 0;
     }
     .life-tab-list {
       overflow: hidden;
@@ -409,7 +429,7 @@
       background: #f9fbfa;
       border: 1px solid var(--line);
       border-radius: 8px;
-      font-size: .86rem;
+      font-size: 1.02rem;
       font-weight: 900;
     }
     .life-tab-btn.active {
@@ -420,13 +440,14 @@
     .life-visual {
       min-width: 0;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 320px;
+      grid-template-columns: minmax(0, 1fr) 360px;
       gap: 12px;
+      min-height: 0;
     }
     .large-icon {
       position: relative;
       overflow: hidden;
-      min-height: 220px;
+      min-height: min(38vh, 260px);
       display: grid;
       place-items: center;
       color: #fff;
@@ -484,10 +505,11 @@
       grid-template-columns: minmax(0, 1fr) 340px;
       gap: 14px;
       align-items: stretch;
+      height: calc(100% - 58px);
     }
     .quiz-question {
       margin-bottom: 12px;
-      font-size: 1.35rem;
+      font-size: 1.75rem;
       line-height: 1.35;
     }
     .quiz-options {
@@ -495,14 +517,15 @@
       gap: 10px;
     }
     .quiz-option {
-      min-height: 54px;
-      padding: 12px;
+      min-height: 66px;
+      padding: 14px 16px;
       text-align: left;
       color: var(--ink);
       background: #fff;
       border: 1px solid var(--line);
       border-radius: 8px;
       font-weight: 900;
+      font-size: 1.18rem;
     }
     .quiz-option.correct {
       color: #123c31;
@@ -515,7 +538,7 @@
       border-color: #d68f86;
     }
     .quiz-hero {
-      min-height: 300px;
+      min-height: min(48vh, 340px);
       display: grid;
       place-items: center;
       background: linear-gradient(135deg, #f6d36b, #2f6f9f);
@@ -570,6 +593,7 @@
     }
 
     @media (max-width: 860px) {
+      body { overflow: auto; }
       .topbar { height: auto; min-height: 65px; }
       .source-link { display: none; }
       #sec-observe.active {
@@ -588,6 +612,7 @@
       .nav-btn { min-height: 46px; border-bottom: 1px solid var(--line); }
       .section { width: min(100% - 18px, 1240px); }
       .obj-grid, .equip-grid, .control-row, .principle-grid { grid-template-columns: 1fr; }
+      .term-list { grid-template-columns: 1fr; }
       .objective { min-height: 0; }
       .objective::after { display: none; }
       .bar-row { grid-template-columns: 62px 1fr 48px; font-size: .9rem; }
