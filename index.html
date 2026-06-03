@@ -450,36 +450,16 @@
       gap: 12px;
       min-height: 0;
     }
-    .large-icon {
+    .life-canvas {
       position: relative;
       overflow: hidden;
+      width: 100%;
       min-height: min(38vh, 260px);
-      display: grid;
-      place-items: center;
-      color: #fff;
+      height: min(38vh, 260px);
+      display: block;
       background: linear-gradient(135deg, #1b463d, #2f6f9f);
       border-radius: 8px;
-      font-size: 5rem;
-      font-weight: 900;
-      isolation: isolate;
       animation: sceneGlow 3.4s ease-in-out infinite;
-    }
-    .large-icon::before,
-    .large-icon::after {
-      content: "";
-      position: absolute;
-      width: 140px;
-      height: 140px;
-      border: 2px solid rgba(255, 255, 255, .26);
-      border-radius: 50%;
-      animation: orbitRing 5.4s linear infinite;
-      z-index: -1;
-    }
-    .large-icon::after {
-      width: 210px;
-      height: 210px;
-      animation-duration: 7s;
-      animation-direction: reverse;
     }
     .design-board {
       display: grid;
@@ -799,7 +779,7 @@
         <div id="lifeTabs" class="life-tab-list" role="tablist" aria-label="生活應用分類"></div>
         <div class="life-visual">
           <article class="card">
-            <div id="lifeIcon" class="large-icon" aria-hidden="true">🥤</div>
+            <canvas id="lifeCanvas" class="life-canvas" width="720" height="300" aria-label="生活應用保溫動畫示意"></canvas>
             <h3 id="lifeName"></h3>
             <p id="lifeText"></p>
             <p id="lifeQuestion" class="result-note"></p>
@@ -890,12 +870,12 @@
       }
     };
     const lifeItems = [
-      { name: "🥤 保溫杯", icon: "🥤", text: "雙層杯壁、空氣層或真空層可以減少熱傳導與對流，讓飲料溫度變化較慢。", q: "如果要讓杯子更輕，你會先減少哪一層材料？" },
-      { name: "🍱 便當袋", icon: "🍱", text: "柔軟布料與鋁箔內襯常一起使用，兼顧隔熱、反射與攜帶方便。", q: "保冷和保熱需要考慮的原理相同嗎？" },
-      { name: "🏠 建築隔熱", icon: "🏠", text: "牆壁、屋頂隔熱材能降低室內外熱交換，減少冷氣或暖氣消耗。", q: "為什麼頂樓教室常比低樓層更熱？" },
-      { name: "✨ 救生毯", icon: "✨", text: "亮面薄膜能反射身體熱輻射，即使很薄也能降低熱量流失。", q: "薄薄一層為什麼也可能有效？" },
-      { name: "🧊 冰桶", icon: "🧊", text: "厚壁、蓋子與少開蓋都能減少外界熱進入，延長冰塊融化時間。", q: "打開蓋子的次數會如何影響保冷？" },
-      { name: "📦 外送保溫箱", icon: "📦", text: "泡棉與密合箱蓋可減少食物與外界空氣交換，維持餐點溫度。", q: "保溫箱太厚時會帶來什麼使用問題？" }
+      { name: "🥤 保溫杯", icon: "🥤", kind: "cup", text: "雙層杯壁、空氣層或真空層可以減少熱傳導與對流，讓飲料溫度變化較慢。", q: "如果要讓杯子更輕，你會先減少哪一層材料？" },
+      { name: "🍱 便當袋", icon: "🍱", kind: "bag", text: "柔軟布料與鋁箔內襯常一起使用，兼顧隔熱、反射與攜帶方便。", q: "保冷和保熱需要考慮的原理相同嗎？" },
+      { name: "🏠 建築隔熱", icon: "🏠", kind: "house", text: "牆壁、屋頂隔熱材能降低室內外熱交換，減少冷氣或暖氣消耗。", q: "為什麼頂樓教室常比低樓層更熱？" },
+      { name: "✨ 救生毯", icon: "✨", kind: "blanket", text: "亮面薄膜能反射身體熱輻射，即使很薄也能降低熱量流失。", q: "薄薄一層為什麼也可能有效？" },
+      { name: "🧊 冰桶", icon: "🧊", kind: "cooler", text: "厚壁、蓋子與少開蓋都能減少外界熱進入，延長冰塊融化時間。", q: "打開蓋子的次數會如何影響保冷？" },
+      { name: "📦 外送保溫箱", icon: "📦", kind: "delivery", text: "泡棉與密合箱蓋可減少食物與外界空氣交換，維持餐點溫度。", q: "保溫箱太厚時會帶來什麼使用問題？" }
     ];
     const quizItems = [
       {
@@ -921,6 +901,42 @@
         options: ["比較薄、比較方便使用", "一定要最厚", "外觀最亮就好"],
         answer: 0,
         good: "正確！效果相近時，薄、輕、好用也是重要條件。"
+      },
+      {
+        q: "傳導主要是熱透過什麼方式移動？",
+        options: ["接觸的物質與粒子碰撞", "只靠聲音傳出去", "一定要有電池"],
+        answer: 0,
+        good: "答對！傳導是熱沿著接觸的物質，由粒子碰撞往外傳。"
+      },
+      {
+        q: "對流最常發生在哪一類物質中？",
+        options: ["空氣或水這類流體", "完全靜止的厚紙板", "沒有溫度的物體"],
+        answer: 0,
+        good: "很好！空氣和水會流動，熱流體上升、冷流體下降，形成對流。"
+      },
+      {
+        q: "亮面的鋁箔紙主要可以減少哪一種熱傳遞？",
+        options: ["熱輻射", "重量變化", "水量蒸發的聲音"],
+        answer: 0,
+        good: "正確！亮面能反射一部分熱輻射。"
+      },
+      {
+        q: "為什麼蓋上蓋子也有助於保溫？",
+        options: ["減少空氣流動與熱散失", "讓杯子變透明", "讓溫度計更漂亮"],
+        answer: 0,
+        good: "答對！蓋子能減少熱空氣跑出去，也降低對流帶走熱量。"
+      },
+      {
+        q: "冰水實驗中，保冷效果較好的組別會有什麼特徵？",
+        options: ["升溫較慢、溫度差較小", "升溫最快", "一定變成 0 度"],
+        answer: 0,
+        good: "沒錯！保冷也是看溫度變化，升溫越慢代表保冷越好。"
+      },
+      {
+        q: "設計保溫裝置時，除了保溫效果，還應該考慮什麼？",
+        options: ["厚度、重量與是否方便使用", "只考慮顏色", "只看材料名稱"],
+        answer: 0,
+        good: "很棒！好的工程設計要同時考慮效果、厚度、重量和使用便利。"
       }
     ];
 
@@ -997,10 +1013,12 @@
         btn.classList.toggle("active", index === activeLife);
         btn.setAttribute("aria-selected", String(index === activeLife));
       });
-      document.querySelector("#lifeIcon").textContent = item.icon;
       document.querySelector("#lifeName").textContent = item.name;
       document.querySelector("#lifeText").textContent = item.text;
       document.querySelector("#lifeQuestion").textContent = item.q;
+      if (document.body.dataset.activeTab === "sec-life" && animControllers["sec-life"]) {
+        animControllers["sec-life"].start();
+      }
     }
 
     function updateDesignScore() {
@@ -1034,6 +1052,208 @@
       ctx.closePath();
       ctx.fill();
     }
+
+    (function () {
+      const canvas = document.querySelector("#lifeCanvas");
+      const ctx = canvas.getContext("2d");
+      let animId = 0;
+      let t = 0;
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = Math.max(360, Math.round(rect.width * ratio));
+        canvas.height = Math.max(220, Math.round(rect.height * ratio));
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      }
+
+      function clearScene(w, h) {
+        const bg = ctx.createLinearGradient(0, 0, w, h);
+        bg.addColorStop(0, "#173f39");
+        bg.addColorStop(1, "#2f6f9f");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+        for (let i = 0; i < 24; i += 1) {
+          ctx.fillStyle = `rgba(255,255,255,${.06 + .04 * Math.sin(t + i)})`;
+          ctx.beginPath();
+          ctx.arc((i * 53 + t * 18) % (w + 40) - 20, 20 + (i * 37) % h, 2 + (i % 3), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function label(text, x, y) {
+        ctx.fillStyle = "#fff";
+        ctx.font = "900 18px Microsoft JhengHei, sans-serif";
+        ctx.fillText(text, x, y);
+      }
+
+      function drawHeatWaves(cx, cy, maxR, color, reverse = false) {
+        for (let i = 0; i < 5; i += 1) {
+          const p = (t * .45 + i / 5) % 1;
+          const r = reverse ? maxR * (1 - p) : maxR * p;
+          ctx.strokeStyle = color.replace("ALPHA", String(.75 - p * .55));
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 18 + r, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      function drawCup(w, h) {
+        const cx = w * .42;
+        const top = h * .18;
+        const cupW = w * .26;
+        const cupH = h * .58;
+        ctx.fillStyle = "rgba(255,255,255,.96)";
+        ctx.strokeStyle = "#dff3eb";
+        ctx.lineWidth = 5;
+        ctx.strokeRect(cx - cupW / 2, top, cupW, cupH);
+        ctx.strokeStyle = "#8ad0b1";
+        ctx.lineWidth = 14;
+        ctx.strokeRect(cx - cupW / 2 - 20, top - 12, cupW + 40, cupH + 24);
+        ctx.fillStyle = "rgba(216,93,42,.62)";
+        ctx.fillRect(cx - cupW / 2 + 8, top + cupH * .45, cupW - 16, cupH * .46);
+        drawHeatWaves(cx, top + cupH * .62, w * .18, "rgba(255,212,106,ALPHA)");
+        drawArrow(ctx, cx + cupW * .72, top + cupH * .3, cx + cupW * .98, top + cupH * .25, "#ffd46a", 3);
+        drawArrow(ctx, cx - cupW * .72, top + cupH * .3, cx - cupW * .98, top + cupH * .25, "#ffd46a", 3);
+        label("雙層杯壁減少熱散失", w * .08, h * .13);
+        label("空氣層 / 真空層", w * .56, h * .42);
+      }
+
+      function drawBag(w, h) {
+        const x = w * .18, y = h * .28, bw = w * .52, bh = h * .48;
+        ctx.fillStyle = "#f2c14e";
+        ctx.fillRect(x, y, bw, bh);
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 5;
+        ctx.strokeRect(x + 12, y + 12, bw - 24, bh - 24);
+        ctx.fillStyle = "#c9d7df";
+        ctx.fillRect(x + 22, y + 26, bw - 44, bh - 52);
+        ctx.fillStyle = "#d85d2a";
+        ctx.beginPath();
+        ctx.arc(x + bw * .5, y + bh * .52, 28, 0, Math.PI * 2);
+        ctx.fill();
+        drawHeatWaves(x + bw * .5, y + bh * .52, w * .22, "rgba(255,255,255,ALPHA)");
+        label("鋁箔內襯反射熱", w * .08, h * .15);
+        label("布料外層方便攜帶", w * .48, h * .82);
+      }
+
+      function drawHouse(w, h) {
+        const x = w * .18, y = h * .35, hw = w * .48, hh = h * .42;
+        ctx.fillStyle = "#f4f7f4";
+        ctx.fillRect(x, y, hw, hh);
+        ctx.fillStyle = "#d85d2a";
+        ctx.beginPath();
+        ctx.moveTo(x - 20, y);
+        ctx.lineTo(x + hw / 2, y - h * .22);
+        ctx.lineTo(x + hw + 20, y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = "#8ad0b1";
+        ctx.lineWidth = 12;
+        ctx.strokeRect(x + 12, y + 12, hw - 24, hh - 24);
+        for (let i = 0; i < 5; i += 1) {
+          drawArrow(ctx, x + hw + 54, y + 30 + i * 22, x + hw + 10, y + 30 + i * 22, "#ffd46a", 3);
+        }
+        label("屋頂與牆壁隔熱", w * .08, h * .15);
+        label("降低室內外熱交換", w * .48, h * .82);
+      }
+
+      function drawBlanket(w, h) {
+        const personX = w * .32, personY = h * .58;
+        ctx.fillStyle = "#ffd46a";
+        ctx.beginPath();
+        ctx.arc(personX, personY - 58, 22, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#e8eef2";
+        ctx.beginPath();
+        ctx.moveTo(personX - 90, personY - 40);
+        ctx.quadraticCurveTo(personX, personY - 95 + Math.sin(t * 3) * 8, personX + 105, personY - 34);
+        ctx.lineTo(personX + 78, personY + 72);
+        ctx.lineTo(personX - 74, personY + 68);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 5;
+        ctx.stroke();
+        drawHeatWaves(personX, personY - 20, w * .2, "rgba(255,212,106,ALPHA)");
+        for (let i = 0; i < 4; i += 1) {
+          drawArrow(ctx, personX + 125, personY - 45 + i * 22, personX + 78, personY - 48 + i * 18, "#ffd46a", 3);
+        }
+        label("亮面薄膜反射熱輻射", w * .08, h * .14);
+      }
+
+      function drawCooler(w, h) {
+        const x = w * .2, y = h * .34, cw = w * .5, ch = h * .42;
+        ctx.fillStyle = "#d7edf5";
+        ctx.fillRect(x, y, cw, ch);
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 12;
+        ctx.strokeRect(x, y, cw, ch);
+        ctx.fillStyle = "#2f6f9f";
+        for (let i = 0; i < 5; i += 1) {
+          ctx.fillRect(x + 34 + i * 42, y + ch * .52 + Math.sin(t * 3 + i) * 4, 30, 26);
+        }
+        for (let i = 0; i < 5; i += 1) {
+          drawArrow(ctx, x + cw + 70, y + 24 + i * 24, x + cw + 18, y + 28 + i * 20, "#ffd46a", 3);
+        }
+        label("厚壁阻擋外界熱進入", w * .08, h * .15);
+        label("少開蓋，冰塊融化較慢", w * .44, h * .84);
+      }
+
+      function drawDelivery(w, h) {
+        const x = w * .18, y = h * .25, bw = w * .5, bh = h * .55;
+        ctx.fillStyle = "#7dbb91";
+        ctx.fillRect(x, y, bw, bh);
+        ctx.strokeStyle = "#1b463d";
+        ctx.lineWidth = 6;
+        ctx.strokeRect(x, y, bw, bh);
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 10;
+        ctx.strokeRect(x + 20, y + 20, bw - 40, bh - 40);
+        ctx.fillStyle = "#d85d2a";
+        ctx.beginPath();
+        ctx.arc(x + bw * .5, y + bh * .5, 28, 0, Math.PI * 2);
+        ctx.fill();
+        drawHeatWaves(x + bw * .5, y + bh * .5, w * .18, "rgba(255,212,106,ALPHA)");
+        drawArrow(ctx, x + bw + 55, y + bh * .35, x + bw + 15, y + bh * .38, "#ffd46a", 3);
+        drawArrow(ctx, x - 55, y + bh * .35, x - 14, y + bh * .38, "#ffd46a", 3);
+        label("密合箱蓋減少空氣交換", w * .08, h * .15);
+        label("泡棉層維持餐點溫度", w * .43, h * .84);
+      }
+
+      function draw() {
+        resizeCanvas();
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        t += .02;
+        clearScene(w, h);
+        const item = lifeItems[activeLife];
+        const drawers = {
+          cup: drawCup,
+          bag: drawBag,
+          house: drawHouse,
+          blanket: drawBlanket,
+          cooler: drawCooler,
+          delivery: drawDelivery
+        };
+        drawers[item.kind](w, h);
+        animId = requestAnimationFrame(draw);
+      }
+
+      animControllers["sec-life"] = {
+        start: () => {
+          cancelAnimationFrame(animId);
+          draw();
+        },
+        cancel: () => cancelAnimationFrame(animId)
+      };
+      window.addEventListener("resize", () => {
+        if (document.body.dataset.activeTab === "sec-life") draw();
+      });
+      draw();
+      cancelAnimationFrame(animId);
+    })();
 
     (function () {
       const canvas = document.querySelector("#demoCanvas");
