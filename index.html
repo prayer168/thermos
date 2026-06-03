@@ -20,6 +20,7 @@
       --blue: #2f6f9f;
       --red: #b5473d;
       --gold: #9a6b20;
+      --orange: #d85d2a;
       --shadow: 0 14px 34px rgba(28, 36, 32, .11);
     }
 
@@ -64,7 +65,22 @@
       background: #f6d36b;
       color: #1b463d;
       font-weight: 900;
+      animation: warmPulse 2.4s ease-in-out infinite;
     }
+    .brand-heat {
+      width: 84px;
+      height: 44px;
+      flex-shrink: 0;
+    }
+    .brand-heat path {
+      fill: none;
+      stroke: #f6d36b;
+      stroke-linecap: round;
+      stroke-width: 5;
+      animation: heatWave 2.1s ease-in-out infinite;
+    }
+    .brand-heat path:nth-child(2) { animation-delay: .22s; }
+    .brand-heat path:nth-child(3) { animation-delay: .44s; }
     .brand span:last-child {
       overflow: hidden;
       white-space: nowrap;
@@ -84,7 +100,7 @@
     .tabbar {
       height: 50px;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 0;
       background: #fff;
       border-bottom: 1px solid var(--line);
@@ -125,6 +141,8 @@
       gap: 8px;
     }
     .objective {
+      position: relative;
+      overflow: hidden;
       min-height: 112px;
       padding: 12px;
       background: var(--panel);
@@ -133,6 +151,29 @@
       border-radius: 8px;
       box-shadow: 0 8px 20px rgba(28, 36, 32, .07);
     }
+    .objective::after {
+      content: "";
+      position: absolute;
+      inset: auto -30px -38px auto;
+      width: 92px;
+      height: 92px;
+      background: rgba(25, 115, 95, .11);
+      border-radius: 999px;
+      animation: cardBubble 4.8s ease-in-out infinite;
+    }
+    .objective-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      margin-right: 6px;
+      border-radius: 8px;
+      background: #fff3cd;
+      animation: iconFloat 2.8s ease-in-out infinite;
+    }
+    .objective:nth-child(2) .objective-icon { animation-delay: .25s; }
+    .objective:nth-child(3) .objective-icon { animation-delay: .5s; }
+    .objective:nth-child(4) .objective-icon { animation-delay: .75s; }
     .objective strong {
       display: block;
       margin-bottom: 6px;
@@ -322,6 +363,10 @@
       border: 1px solid var(--line);
       border-radius: 8px;
     }
+    .demo-canvas {
+      height: 210px;
+      margin-bottom: 12px;
+    }
     .canvas-wrap { min-width: 0; }
     .principle-grid {
       display: grid;
@@ -379,6 +424,8 @@
       gap: 12px;
     }
     .large-icon {
+      position: relative;
+      overflow: hidden;
       min-height: 220px;
       display: grid;
       place-items: center;
@@ -387,6 +434,25 @@
       border-radius: 8px;
       font-size: 5rem;
       font-weight: 900;
+      isolation: isolate;
+      animation: sceneGlow 3.4s ease-in-out infinite;
+    }
+    .large-icon::before,
+    .large-icon::after {
+      content: "";
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border: 2px solid rgba(255, 255, 255, .26);
+      border-radius: 50%;
+      animation: orbitRing 5.4s linear infinite;
+      z-index: -1;
+    }
+    .large-icon::after {
+      width: 210px;
+      height: 210px;
+      animation-duration: 7s;
+      animation-direction: reverse;
     }
     .design-board {
       display: grid;
@@ -413,6 +479,95 @@
       background: var(--gold);
       transition: width .35s ease;
     }
+    .quiz-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .quiz-question {
+      margin-bottom: 12px;
+      font-size: 1.35rem;
+      line-height: 1.35;
+    }
+    .quiz-options {
+      display: grid;
+      gap: 10px;
+    }
+    .quiz-option {
+      min-height: 54px;
+      padding: 12px;
+      text-align: left;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-weight: 900;
+    }
+    .quiz-option.correct {
+      color: #123c31;
+      background: #dff3eb;
+      border-color: #83c4aa;
+    }
+    .quiz-option.wrong {
+      color: #6b211b;
+      background: #f8dfdc;
+      border-color: #d68f86;
+    }
+    .quiz-hero {
+      min-height: 300px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #f6d36b, #2f6f9f);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 6rem;
+      font-weight: 900;
+      animation: quizBounce 2.7s ease-in-out infinite;
+    }
+    .quiz-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .action-btn {
+      min-height: 42px;
+      padding: 8px 12px;
+      color: #fff;
+      background: var(--green);
+      border: 0;
+      border-radius: 8px;
+      font-weight: 900;
+    }
+
+    @keyframes warmPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(246, 211, 107, 0); }
+      50% { transform: scale(1.08); box-shadow: 0 0 18px rgba(246, 211, 107, .55); }
+    }
+    @keyframes heatWave {
+      0%, 100% { transform: translateY(8px); opacity: .55; }
+      50% { transform: translateY(-4px); opacity: 1; }
+    }
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(-4deg); }
+    }
+    @keyframes cardBubble {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-12px, -10px) scale(1.12); }
+    }
+    @keyframes sceneGlow {
+      0%, 100% { box-shadow: inset 0 0 0 rgba(255, 255, 255, 0); }
+      50% { box-shadow: inset 0 0 42px rgba(255, 255, 255, .22); }
+    }
+    @keyframes orbitRing {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes quizBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.03); }
+    }
 
     @media (max-width: 860px) {
       .topbar { height: auto; min-height: 65px; }
@@ -424,7 +579,7 @@
         padding-inline: 12px;
       }
       .obj-grid, .principle-grid { grid-template-columns: repeat(2, 1fr); }
-      .obs-bottom, .layout, .life-visual { grid-template-columns: 1fr; display: grid; }
+      .obs-bottom, .layout, .life-visual, .quiz-layout { grid-template-columns: 1fr; display: grid; }
       .life-layout { grid-template-columns: 1fr; min-height: 0; }
       .life-tab-list { min-height: 250px; }
     }
@@ -434,6 +589,7 @@
       .section { width: min(100% - 18px, 1240px); }
       .obj-grid, .equip-grid, .control-row, .principle-grid { grid-template-columns: 1fr; }
       .objective { min-height: 0; }
+      .objective::after { display: none; }
       .bar-row { grid-template-columns: 62px 1fr 48px; font-size: .9rem; }
       canvas { height: 300px; }
     }
@@ -442,17 +598,23 @@
 <body data-active-tab="sec-observe">
   <header class="topbar">
     <a class="brand" href="./" aria-label="保溫杯探究首頁">
-      <span class="brand-mark" aria-hidden="true">熱</span>
-      <span>保溫杯探究</span>
+      <span class="brand-mark" aria-hidden="true">🔥</span>
+      <span>🧪 保溫杯探究 🌡️</span>
+      <svg class="brand-heat" viewBox="0 0 90 50" aria-hidden="true">
+        <path d="M15 42 C6 28, 30 26, 20 10"></path>
+        <path d="M45 42 C34 27, 58 24, 47 8"></path>
+        <path d="M72 42 C62 29, 84 25, 75 12"></path>
+      </svg>
     </a>
-    <a class="source-link" href="https://www.youtube.com/watch?v=zrf_fhEwAqQ" target="_blank" rel="noopener noreferrer">教學影片</a>
+    <a class="source-link" href="https://www.youtube.com/watch?v=zrf_fhEwAqQ" target="_blank" rel="noopener noreferrer">🎬 教學影片</a>
   </header>
 
   <nav class="tabbar" aria-label="教材頁籤">
-    <button class="nav-btn active" data-target="sec-observe" type="button">觀察站</button>
-    <button class="nav-btn" data-target="sec-demo" type="button">實驗示範</button>
-    <button class="nav-btn" data-target="sec-principle" type="button">原理小教室</button>
-    <button class="nav-btn" data-target="sec-life" type="button">生活應用</button>
+    <button class="nav-btn active" data-target="sec-observe" type="button">🔍 觀察站</button>
+    <button class="nav-btn" data-target="sec-demo" type="button">🧪 實驗示範</button>
+    <button class="nav-btn" data-target="sec-principle" type="button">🧠 原理小教室</button>
+    <button class="nav-btn" data-target="sec-life" type="button">🌍 生活應用</button>
+    <button class="nav-btn" data-target="sec-quiz" type="button">🏆 闖關測驗</button>
   </nav>
 
   <main>
@@ -464,19 +626,19 @@
         </div>
         <div class="obj-grid">
           <article class="objective">
-            <strong>辨認控制變因</strong>
+            <strong><span class="objective-icon" aria-hidden="true">🎯</span>辨認控制變因</strong>
             <p>四個容器要一樣，改變的只有外層包覆材料。</p>
           </article>
           <article class="objective">
-            <strong>讀取溫度資料</strong>
+            <strong><span class="objective-icon" aria-hidden="true">📊</span>讀取溫度資料</strong>
             <p>比較 20 分鐘或 30 分鐘前後的溫度差。</p>
           </article>
           <article class="objective">
-            <strong>解釋保溫效果</strong>
+            <strong><span class="objective-icon" aria-hidden="true">🔥</span>解釋保溫效果</strong>
             <p>溫度差越小，代表熱量交換越慢。</p>
           </article>
           <article class="objective">
-            <strong>設計更好保溫杯</strong>
+            <strong><span class="objective-icon" aria-hidden="true">🏗️</span>設計更好保溫杯</strong>
             <p>效果相近時，厚度越薄、越方便使用的設計越佳。</p>
           </article>
         </div>
@@ -485,23 +647,23 @@
         <article class="card">
           <h2>實驗器材</h2>
           <div class="equip-grid">
-            <div class="equip">厚紙板</div>
-            <div class="equip">棉布</div>
-            <div class="equip">鋁箔紙</div>
-            <div class="equip">寶特瓶數個</div>
-            <div class="equip">橡皮筋</div>
-            <div class="equip">漏斗</div>
-            <div class="equip">電子式溫度計</div>
-            <div class="equip">燒杯與蓋子</div>
+            <div class="equip">📦 厚紙板</div>
+            <div class="equip">🧣 棉布</div>
+            <div class="equip">✨ 鋁箔紙</div>
+            <div class="equip">🧴 寶特瓶數個</div>
+            <div class="equip">🪢 橡皮筋</div>
+            <div class="equip">🔻 漏斗</div>
+            <div class="equip">🌡️ 電子式溫度計</div>
+            <div class="equip">🥤 燒杯與蓋子</div>
           </div>
         </article>
         <article class="card">
           <h2>重要詞彙</h2>
           <div class="term-list">
-            <div class="term">對照組<span>不包覆材料，用來和其他組比較。</span></div>
-            <div class="term">溫度差<span>初溫和末溫相差多少，判斷熱交換快慢。</span></div>
-            <div class="term">保溫效果<span>讓熱水降溫慢，或讓冰水升溫慢的能力。</span></div>
-            <div class="term">熱傳遞<span>熱會從溫度高的地方移向溫度低的地方。</span></div>
+            <div class="term">🧭 對照組<span>不包覆材料，用來和其他組比較。</span></div>
+            <div class="term">🌡️ 溫度差<span>初溫和末溫相差多少，判斷熱交換快慢。</span></div>
+            <div class="term">🛡️ 保溫效果<span>讓熱水降溫慢，或讓冰水升溫慢的能力。</span></div>
+            <div class="term">🔥 熱傳遞<span>熱會從溫度高的地方移向溫度低的地方。</span></div>
           </div>
         </article>
       </div>
@@ -511,12 +673,12 @@
       <div class="layout">
         <article class="card">
           <div class="panel-title">
-            <h2 id="demoTitle">實驗示範</h2>
-            <span class="badge">資料比較</span>
+            <h2 id="demoTitle">🧪 實驗示範</h2>
+            <span class="badge">📈 資料比較</span>
           </div>
           <div class="segmented" role="group" aria-label="選擇實驗">
-            <button id="modeHot" class="active" type="button">熱水降溫</button>
-            <button id="modeCold" type="button">冰水升溫</button>
+            <button id="modeHot" class="active" type="button">🔥 熱水降溫</button>
+            <button id="modeCold" type="button">🧊 冰水升溫</button>
           </div>
           <ol class="step-list">
             <li><b>1</b><span>準備四個相同容器：不包覆、包棉布、包鋁箔紙、包厚紙板。</span></li>
@@ -529,9 +691,10 @@
 
         <article class="card">
           <div class="panel-title">
-            <h2>溫度差圖表</h2>
+            <h2>📊 溫度差圖表</h2>
             <span id="timeBadge" class="badge">20 分鐘</span>
           </div>
+          <canvas id="demoCanvas" class="demo-canvas" width="760" height="260" aria-label="實驗材料保溫動畫"></canvas>
           <div id="chart" class="chart" aria-live="polite"></div>
           <div class="control-row" style="margin-top: 14px;">
             <label class="field">自訂材料
@@ -555,8 +718,8 @@
       <div class="layout">
         <article class="card">
           <div class="panel-title">
-            <h2 id="principleTitle">原理小教室</h2>
-            <span class="badge">熱傳遞模型</span>
+            <h2 id="principleTitle">🧠 原理小教室</h2>
+            <span class="badge">🔥 熱傳遞模型</span>
           </div>
           <div class="control-row">
             <label class="field">材料
@@ -572,9 +735,9 @@
             </label>
           </div>
           <div class="principle-grid">
-            <div class="mini"><strong>傳導</strong><p>熱沿著接觸的物質移動，材料越容易導熱，散熱越快。</p></div>
-            <div class="mini"><strong>對流</strong><p>空氣或水流動會帶走熱量，蓋子與包覆能減少流動。</p></div>
-            <div class="mini"><strong>輻射</strong><p>物體會向外放出熱，亮面的鋁箔能反射一部分熱輻射。</p></div>
+            <div class="mini"><strong>🤝 傳導</strong><p>熱沿著接觸的物質移動，材料越容易導熱，散熱越快。</p></div>
+            <div class="mini"><strong>💨 對流</strong><p>空氣或水流動會帶走熱量，蓋子與包覆能減少流動。</p></div>
+            <div class="mini"><strong>✨ 輻射</strong><p>物體會向外放出熱，亮面的鋁箔能反射一部分熱輻射。</p></div>
           </div>
           <p id="principleText" class="result-note"></p>
         </article>
@@ -586,20 +749,20 @@
 
     <section id="sec-life" class="section" aria-labelledby="lifeTitle">
       <div class="panel-title">
-        <h2 id="lifeTitle">生活應用：哪裡也需要保溫或隔熱？</h2>
-        <span class="badge">應用探索</span>
+        <h2 id="lifeTitle">🌍 生活應用：哪裡也需要保溫或隔熱？</h2>
+        <span class="badge">🔎 應用探索</span>
       </div>
       <div class="life-layout">
         <div id="lifeTabs" class="life-tab-list" role="tablist" aria-label="生活應用分類"></div>
         <div class="life-visual">
           <article class="card">
-            <div id="lifeIcon" class="large-icon" aria-hidden="true">杯</div>
+            <div id="lifeIcon" class="large-icon" aria-hidden="true">🥤</div>
             <h3 id="lifeName"></h3>
             <p id="lifeText"></p>
             <p id="lifeQuestion" class="result-note"></p>
           </article>
           <article class="card design-board">
-            <h3>我的保溫杯設計評估</h3>
+            <h3>🛠️ 我的保溫杯設計評估</h3>
             <label class="field">材料選擇
               <select id="designMaterial">
                 <option value="cotton">棉布</option>
@@ -621,6 +784,29 @@
             <p id="designAdvice" class="result-note"></p>
           </article>
         </div>
+      </div>
+    </section>
+
+    <section id="sec-quiz" class="section" aria-labelledby="quizTitle">
+      <div class="panel-title">
+        <h2 id="quizTitle">🏆 闖關測驗</h2>
+        <span class="badge">答對就升級</span>
+      </div>
+      <div class="quiz-layout">
+        <article class="card">
+          <p id="quizProgress" class="result-note"></p>
+          <h3 id="quizQuestion" class="quiz-question"></h3>
+          <div id="quizOptions" class="quiz-options"></div>
+          <p id="quizFeedback" class="result-note"></p>
+          <div class="quiz-actions">
+            <button id="nextQuiz" class="action-btn" type="button">下一關 ➜</button>
+            <button id="resetQuiz" class="action-btn" type="button">重新挑戰 ↻</button>
+          </div>
+        </article>
+        <article class="card">
+          <div id="quizHero" class="quiz-hero" aria-hidden="true">🏅</div>
+          <p id="quizSummary" class="result-note"></p>
+        </article>
       </div>
     </section>
   </main>
@@ -661,16 +847,45 @@
       }
     };
     const lifeItems = [
-      { name: "保溫杯", icon: "杯", text: "雙層杯壁、空氣層或真空層可以減少熱傳導與對流，讓飲料溫度變化較慢。", q: "如果要讓杯子更輕，你會先減少哪一層材料？" },
-      { name: "便當袋", icon: "袋", text: "柔軟布料與鋁箔內襯常一起使用，兼顧隔熱、反射與攜帶方便。", q: "保冷和保熱需要考慮的原理相同嗎？" },
-      { name: "建築隔熱", icon: "屋", text: "牆壁、屋頂隔熱材能降低室內外熱交換，減少冷氣或暖氣消耗。", q: "為什麼頂樓教室常比低樓層更熱？" },
-      { name: "救生毯", icon: "毯", text: "亮面薄膜能反射身體熱輻射，即使很薄也能降低熱量流失。", q: "薄薄一層為什麼也可能有效？" },
-      { name: "冰桶", icon: "冰", text: "厚壁、蓋子與少開蓋都能減少外界熱進入，延長冰塊融化時間。", q: "打開蓋子的次數會如何影響保冷？" },
-      { name: "外送保溫箱", icon: "箱", text: "泡棉與密合箱蓋可減少食物與外界空氣交換，維持餐點溫度。", q: "保溫箱太厚時會帶來什麼使用問題？" }
+      { name: "🥤 保溫杯", icon: "🥤", text: "雙層杯壁、空氣層或真空層可以減少熱傳導與對流，讓飲料溫度變化較慢。", q: "如果要讓杯子更輕，你會先減少哪一層材料？" },
+      { name: "🍱 便當袋", icon: "🍱", text: "柔軟布料與鋁箔內襯常一起使用，兼顧隔熱、反射與攜帶方便。", q: "保冷和保熱需要考慮的原理相同嗎？" },
+      { name: "🏠 建築隔熱", icon: "🏠", text: "牆壁、屋頂隔熱材能降低室內外熱交換，減少冷氣或暖氣消耗。", q: "為什麼頂樓教室常比低樓層更熱？" },
+      { name: "✨ 救生毯", icon: "✨", text: "亮面薄膜能反射身體熱輻射，即使很薄也能降低熱量流失。", q: "薄薄一層為什麼也可能有效？" },
+      { name: "🧊 冰桶", icon: "🧊", text: "厚壁、蓋子與少開蓋都能減少外界熱進入，延長冰塊融化時間。", q: "打開蓋子的次數會如何影響保冷？" },
+      { name: "📦 外送保溫箱", icon: "📦", text: "泡棉與密合箱蓋可減少食物與外界空氣交換，維持餐點溫度。", q: "保溫箱太厚時會帶來什麼使用問題？" }
+    ];
+    const quizItems = [
+      {
+        q: "哪一組是用來比較其他材料效果的對照組？",
+        options: ["不包覆材料的容器", "包棉布的容器", "包鋁箔紙的容器"],
+        answer: 0,
+        good: "答對了！對照組不改變包覆材料，才能看出其他材料的影響。"
+      },
+      {
+        q: "判斷保溫效果時，哪一個資料最重要？",
+        options: ["容器顏色", "溫度差大小", "倒水時的聲音"],
+        answer: 1,
+        good: "沒錯！溫度差越小，表示熱交換越慢。"
+      },
+      {
+        q: "影片中的熱水與冰水實驗，哪一種材料表現最好？",
+        options: ["厚紙板", "鋁箔紙", "棉布"],
+        answer: 2,
+        good: "漂亮！兩組資料都顯示棉布的溫度差最小。"
+      },
+      {
+        q: "如果兩個設計保溫效果差不多，哪個設計較佳？",
+        options: ["比較薄、比較方便使用", "一定要最厚", "外觀最亮就好"],
+        answer: 0,
+        good: "正確！效果相近時，薄、輕、好用也是重要條件。"
+      }
     ];
 
     let activeMode = "hot";
     let activeLife = 0;
+    let quizIndex = 0;
+    let quizScore = 0;
+    let quizAnswered = false;
 
     const animControllers = {};
     const chart = document.querySelector("#chart");
@@ -694,6 +909,9 @@
       timeBadge.textContent = data.time;
       conclusion.textContent = `${data.title}結果：${best.label}的溫度差最小，所以保溫效果最佳。`;
       updateDesignFeedback();
+      if (document.body.dataset.activeTab === "sec-demo" && animControllers["sec-demo"]) {
+        animControllers["sec-demo"].start();
+      }
     }
 
     function updateDesignFeedback() {
@@ -773,6 +991,84 @@
       ctx.closePath();
       ctx.fill();
     }
+
+    (function () {
+      const canvas = document.querySelector("#demoCanvas");
+      const ctx = canvas.getContext("2d");
+      let animId = 0;
+      let t = 0;
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = Math.max(320, Math.round(rect.width * ratio));
+        canvas.height = Math.max(180, Math.round(rect.height * ratio));
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      }
+
+      function drawCup(x, y, label, diff, color, maxDiff) {
+        const h = canvas.clientHeight;
+        const cupH = Math.min(82, h * .42);
+        const cupW = Math.min(70, canvas.clientWidth * .16);
+        const heatLoss = diff / maxDiff;
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#1b463d";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x - cupW / 2, y, cupW, cupH);
+        ctx.fillStyle = activeMode === "hot" ? `rgba(181, 71, 61, ${.28 + heatLoss * .28})` : `rgba(47, 111, 159, ${.26 + (1 - heatLoss) * .24})`;
+        ctx.fillRect(x - cupW / 2 + 4, y + cupH * .38, cupW - 8, cupH * .52);
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = color;
+        ctx.strokeRect(x - cupW / 2 - 10, y - 7, cupW + 20, cupH + 14);
+        const arrows = Math.max(1, Math.round(heatLoss * 5));
+        for (let i = 0; i < arrows; i += 1) {
+          const phase = t + i * .8 + x * .01;
+          const side = i % 2 ? 1 : -1;
+          const ay = y + 16 + i * 13;
+          drawArrow(ctx, x + side * (cupW / 2 + 10), ay, x + side * (cupW / 2 + 18 + heatLoss * 22 + Math.sin(phase) * 4), ay - 5, "#d85d2a", 2);
+        }
+        ctx.fillStyle = "#1c2420";
+        ctx.font = "800 13px Microsoft JhengHei, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(label, x, y + cupH + 34);
+        ctx.fillStyle = color;
+        ctx.fillText(`${diff.toFixed(1)}度`, x, y + cupH + 52);
+      }
+
+      function draw() {
+        resizeCanvas();
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        const data = datasets[activeMode];
+        const maxDiff = Math.max(...data.rows.map(row => row.diff));
+        t += .035;
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = "#f8fbfb";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "#5f6f68";
+        ctx.font = "900 15px Microsoft JhengHei, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText(activeMode === "hot" ? "🔥 紅色箭頭越多，代表熱散失越快" : "🧊 箭頭越多，代表外界熱進入越快", 16, 28);
+        data.rows.forEach((row, index) => {
+          const x = 70 + index * ((w - 140) / 3);
+          drawCup(x, 54 + Math.sin(t + index) * 3, row.label, row.diff, row.color, maxDiff);
+        });
+        animId = requestAnimationFrame(draw);
+      }
+
+      animControllers["sec-demo"] = {
+        start: () => {
+          cancelAnimationFrame(animId);
+          draw();
+        },
+        cancel: () => cancelAnimationFrame(animId)
+      };
+      window.addEventListener("resize", () => {
+        if (document.body.dataset.activeTab === "sec-demo") draw();
+      });
+      draw();
+      cancelAnimationFrame(animId);
+    })();
 
     (function () {
       const canvas = document.querySelector("#heatCanvas");
@@ -855,6 +1151,62 @@
       cancelAnimationFrame(animId);
     })();
 
+    function renderQuiz() {
+      const item = quizItems[quizIndex];
+      quizAnswered = false;
+      document.querySelector("#quizProgress").textContent = `第 ${quizIndex + 1} / ${quizItems.length} 關　目前得分：${quizScore}`;
+      document.querySelector("#quizQuestion").textContent = item.q;
+      document.querySelector("#quizFeedback").textContent = "選一個答案，看看你的保溫杯研究員等級。";
+      document.querySelector("#quizHero").textContent = quizScore >= 3 ? "🏆" : quizIndex >= 2 ? "🚀" : "🏅";
+      document.querySelector("#quizSummary").textContent = `完成 ${quizIndex} 關，答對 ${quizScore} 題。`;
+      const options = item.options.map((option, index) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "quiz-option";
+        btn.textContent = `${["A", "B", "C"][index]}　${option}`;
+        btn.addEventListener("click", () => answerQuiz(index));
+        return btn;
+      });
+      document.querySelector("#quizOptions").replaceChildren(...options);
+    }
+
+    function answerQuiz(index) {
+      if (quizAnswered) return;
+      quizAnswered = true;
+      const item = quizItems[quizIndex];
+      const buttons = [...document.querySelectorAll(".quiz-option")];
+      buttons.forEach((btn, btnIndex) => {
+        btn.classList.toggle("correct", btnIndex === item.answer);
+        btn.classList.toggle("wrong", btnIndex === index && index !== item.answer);
+      });
+      if (index === item.answer) {
+        quizScore += 1;
+        document.querySelector("#quizFeedback").textContent = `✅ ${item.good}`;
+      } else {
+        document.querySelector("#quizFeedback").textContent = `再想想：正確答案是「${item.options[item.answer]}」。`;
+      }
+      document.querySelector("#quizProgress").textContent = `第 ${quizIndex + 1} / ${quizItems.length} 關　目前得分：${quizScore}`;
+      document.querySelector("#quizSummary").textContent =
+        quizIndex === quizItems.length - 1 ? `挑戰完成！你答對 ${quizScore} / ${quizItems.length} 題。` : "按下一關繼續挑戰。";
+      document.querySelector("#quizHero").textContent = index === item.answer ? "🎉" : "💡";
+    }
+
+    function nextQuiz() {
+      if (quizIndex < quizItems.length - 1) {
+        quizIndex += 1;
+        renderQuiz();
+      } else {
+        document.querySelector("#quizFeedback").textContent = `總結：你答對 ${quizScore} / ${quizItems.length} 題。重新挑戰可以再刷新研究員等級。`;
+        document.querySelector("#quizHero").textContent = quizScore === quizItems.length ? "🏆" : "🎓";
+      }
+    }
+
+    function resetQuiz() {
+      quizIndex = 0;
+      quizScore = 0;
+      renderQuiz();
+    }
+
     document.querySelectorAll(".nav-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
@@ -881,11 +1233,14 @@
     ["#designMaterial", "#designThickness", "#designPortability"].forEach(selector => {
       document.querySelector(selector).addEventListener("input", updateDesignScore);
     });
+    document.querySelector("#nextQuiz").addEventListener("click", nextQuiz);
+    document.querySelector("#resetQuiz").addEventListener("click", resetQuiz);
 
     renderChart();
     renderLifeTabs();
     renderLife();
     updateDesignScore();
+    renderQuiz();
   </script>
 </body>
 </html>
