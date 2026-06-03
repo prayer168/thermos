@@ -345,11 +345,15 @@
     }
     .bar-row {
       display: grid;
-      grid-template-columns: 72px 1fr 56px;
+      grid-template-columns: 72px 1fr 78px;
       gap: 8px;
       align-items: center;
       font-size: 1.04rem;
       font-weight: 800;
+    }
+    .bar-value {
+      text-align: right;
+      white-space: nowrap;
     }
     .bar-track {
       height: 28px;
@@ -374,6 +378,12 @@
       font-weight: 800;
       font-size: 1.05rem;
     }
+    .chart-note {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: .95rem;
+      font-weight: 900;
+    }
     canvas {
       width: 100%;
       min-width: 0;
@@ -384,8 +394,16 @@
       border-radius: 8px;
     }
     .demo-canvas {
-      height: min(25vh, 210px);
-      margin-bottom: 12px;
+      height: min(18vh, 128px);
+      margin-bottom: 8px;
+    }
+    #sec-demo .card:nth-child(2) .control-row {
+      margin-top: 8px !important;
+      margin-bottom: 8px;
+    }
+    #sec-demo .card:nth-child(2) .result-note {
+      margin-top: 8px;
+      padding: 8px 10px;
     }
     .canvas-wrap { min-width: 0; }
     .principle-grid {
@@ -601,7 +619,7 @@
       .term-list { grid-template-columns: 1fr; }
       .objective { min-height: 0; }
       .objective::after { display: none; }
-      .bar-row { grid-template-columns: 62px 1fr 48px; font-size: .9rem; }
+      .bar-row { grid-template-columns: 62px 1fr 70px; font-size: .9rem; }
       canvas { height: 300px; }
     }
   </style>
@@ -706,6 +724,7 @@
             <span id="timeBadge" class="badge">20 分鐘</span>
           </div>
           <canvas id="demoCanvas" class="demo-canvas" width="760" height="260" aria-label="實驗材料保溫動畫"></canvas>
+          <p id="chartNote" class="chart-note">數字代表實驗前後的溫度差，單位是 °C。</p>
           <div id="chart" class="chart" aria-live="polite"></div>
           <div class="control-row" style="margin-top: 14px;">
             <label class="field">自訂材料
@@ -717,7 +736,7 @@
               </select>
             </label>
             <label class="field">包覆層數
-              <input id="layerInput" type="range" min="1" max="4" value="2">
+              <input id="layerInput" type="range" min="1" max="4" value="1">
             </label>
           </div>
           <p id="designFeedback" class="result-note"></p>
@@ -951,22 +970,39 @@
     const conclusion = document.querySelector("#demoConclusion");
     const timeBadge = document.querySelector("#timeBadge");
 
+    function getLayerCount() {
+      return Number(document.querySelector("#layerInput")?.value || 1);
+    }
+
+    function getAdjustedRows(data) {
+      const layers = getLayerCount();
+      const layerEffect = { cotton: .09, foil: .06, cardboard: .055 };
+      return data.rows.map(row => {
+        if (!layerEffect[row.key]) return { ...row, adjustedDiff: row.diff };
+        const factor = Math.max(.62, 1 - (layers - 1) * layerEffect[row.key]);
+        return { ...row, adjustedDiff: Number((row.diff * factor).toFixed(1)) };
+      });
+    }
+
     function renderChart() {
       const data = datasets[activeMode];
-      const max = Math.max(...data.rows.map(row => row.diff));
-      chart.replaceChildren(...data.rows.map(row => {
+      const rows = getAdjustedRows(data);
+      const max = Math.max(...rows.map(row => row.adjustedDiff));
+      chart.replaceChildren(...rows.map(row => {
         const wrap = document.createElement("div");
         wrap.className = "bar-row";
         wrap.innerHTML = `
           <span>${row.label}</span>
-          <div class="bar-track"><div class="bar-fill" style="width:${(row.diff / max) * 100}%;background:${row.color}"></div></div>
-          <span>${row.diff.toFixed(1)}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${(row.adjustedDiff / max) * 100}%;background:${row.color}"></div></div>
+          <span class="bar-value">${row.adjustedDiff.toFixed(1)} °C</span>
         `;
         return wrap;
       }));
-      const best = data.rows.reduce((a, b) => a.diff < b.diff ? a : b);
+      const best = rows.reduce((a, b) => a.adjustedDiff < b.adjustedDiff ? a : b);
       timeBadge.textContent = data.time;
-      conclusion.textContent = `${data.title}結果：${best.label}的溫度差最小，所以保溫效果最佳。`;
+      document.querySelector("#chartNote").textContent =
+        `數字代表實驗前後的溫度差，單位是 °C；包覆層數 ${getLayerCount()} 層時，包覆材料的預估溫度差會跟著調整。`;
+      conclusion.textContent = `${data.title}結果：${best.label}的溫度差最小（${best.adjustedDiff.toFixed(1)} °C），所以保溫效果最佳。`;
       updateDesignFeedback();
       if (document.body.dataset.activeTab === "sec-demo" && animControllers["sec-demo"]) {
         animControllers["sec-demo"].start();
@@ -980,7 +1016,7 @@
       const score = Math.min(98, base + layers * 4);
       const burden = layers >= 4 ? "但層數太多可能變厚、不好拿" : "厚度仍算容易操作";
       document.querySelector("#designFeedback").textContent =
-        `${materialLabels[material]}包覆 ${layers} 層，預估保溫能力約 ${score} 分，${burden}。`;
+        `${materialLabels[material]}包覆 ${layers} 層，預估保溫能力約 ${score} 分，${burden}；上方圖表已依層數更新溫度差（°C）。`;
     }
 
     function setMode(mode) {
@@ -1139,24 +1175,107 @@
       }
 
       function drawHouse(w, h) {
-        const x = w * .18, y = h * .35, hw = w * .48, hh = h * .42;
-        ctx.fillStyle = "#f4f7f4";
+        const x = w * .18;
+        const y = h * .36;
+        const hw = w * .48;
+        const hh = h * .42;
+        const roofPeak = { x: x + hw / 2, y: y - h * .24 };
+        const roofLeft = { x: x - 28, y };
+        const roofRight = { x: x + hw + 28, y };
+        const pulse = (Math.sin(t * 2.4) + 1) / 2;
+
+        ctx.fillStyle = "rgba(255, 210, 92, .95)";
+        ctx.beginPath();
+        ctx.arc(w * .82, h * .18, 34 + pulse * 4, 0, Math.PI * 2);
+        ctx.fill();
+        for (let i = 0; i < 10; i += 1) {
+          const a = i * Math.PI / 5 + t * .18;
+          drawArrow(ctx, w * .82 + Math.cos(a) * 52, h * .18 + Math.sin(a) * 52, w * .82 + Math.cos(a) * 68, h * .18 + Math.sin(a) * 68, "rgba(255, 212, 106, .86)", 2);
+        }
+
+        const outsideGrad = ctx.createLinearGradient(x + hw + 40, 0, w, 0);
+        outsideGrad.addColorStop(0, "rgba(216, 93, 42, .08)");
+        outsideGrad.addColorStop(1, "rgba(216, 93, 42, .28)");
+        ctx.fillStyle = outsideGrad;
+        ctx.fillRect(x + hw + 26, y - h * .24, w - (x + hw + 26), hh + h * .36);
+
+        ctx.fillStyle = "#f7fbf9";
         ctx.fillRect(x, y, hw, hh);
         ctx.fillStyle = "#d85d2a";
         ctx.beginPath();
-        ctx.moveTo(x - 20, y);
-        ctx.lineTo(x + hw / 2, y - h * .22);
-        ctx.lineTo(x + hw + 20, y);
+        ctx.moveTo(roofLeft.x, roofLeft.y);
+        ctx.lineTo(roofPeak.x, roofPeak.y);
+        ctx.lineTo(roofRight.x, roofRight.y);
         ctx.closePath();
         ctx.fill();
+
+        ctx.strokeStyle = "#1b463d";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x, y, hw, hh);
         ctx.strokeStyle = "#8ad0b1";
-        ctx.lineWidth = 12;
+        ctx.lineWidth = 16;
         ctx.strokeRect(x + 12, y + 12, hw - 24, hh - 24);
-        for (let i = 0; i < 5; i += 1) {
-          drawArrow(ctx, x + hw + 54, y + 30 + i * 22, x + hw + 10, y + 30 + i * 22, "#ffd46a", 3);
+        ctx.strokeStyle = "#8ad0b1";
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.moveTo(roofLeft.x + 30, roofLeft.y - 3);
+        ctx.lineTo(roofPeak.x, roofPeak.y + 26);
+        ctx.lineTo(roofRight.x - 30, roofRight.y - 3);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(47, 111, 159, .12)";
+        ctx.fillRect(x + 34, y + 40, hw - 68, hh - 80);
+        ctx.fillStyle = "#2f6f9f";
+        ctx.fillRect(x + hw * .18, y + hh * .46, 34, 42);
+        ctx.fillStyle = "#2f6f9f";
+        ctx.fillRect(x + hw * .72, y + hh * .46, 34, 42);
+
+        for (let i = 0; i < 6; i += 1) {
+          const yy = y + 24 + i * (hh - 52) / 5;
+          const wobble = Math.sin(t * 4 + i) * 6;
+          drawArrow(ctx, x + hw + 104 + wobble, yy, x + hw + 28, yy, "#ffd46a", 4);
         }
-        label("屋頂與牆壁隔熱", w * .08, h * .15);
-        label("降低室內外熱交換", w * .48, h * .82);
+        for (let i = 0; i < 5; i += 1) {
+          const p = (t * .38 + i * .19) % 1;
+          drawArrow(ctx, w * (.79 - p * .28), h * (.24 + p * .17), roofPeak.x + 20 + i * 7, roofPeak.y + 24 + i * 2, "#ffcf5b", 3);
+        }
+
+        ctx.setLineDash([8, 8]);
+        ctx.strokeStyle = "rgba(255, 212, 106, .9)";
+        ctx.lineWidth = 3;
+        for (let i = 0; i < 4; i += 1) {
+          const yy = y + 42 + i * 28;
+          ctx.beginPath();
+          ctx.moveTo(x + hw + 18, yy);
+          ctx.lineTo(x + hw - 42, yy + Math.sin(t * 3 + i) * 6);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+
+        for (let i = 0; i < 4; i += 1) {
+          const yy = y + 50 + i * 26;
+          drawArrow(ctx, x + hw - 50, yy, x + hw - 92, yy + Math.sin(t * 2 + i) * 4, "rgba(255, 212, 106, .36)", 2);
+        }
+
+        const tx = x + hw * .5;
+        const ty = y + hh * .66;
+        ctx.strokeStyle = "#2f6f9f";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(tx, ty - 38);
+        ctx.lineTo(tx, ty + 24);
+        ctx.stroke();
+        ctx.fillStyle = "#2f6f9f";
+        ctx.beginPath();
+        ctx.arc(tx, ty + 30, 13, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "900 15px Microsoft JhengHei, sans-serif";
+        ctx.fillText("室內穩定", tx - 38, ty + 58);
+
+        label("室外高溫與日照", w * .62, h * .15);
+        label("隔熱層阻擋大部分熱", w * .07, h * .15);
+        label("只有少量熱穿透，室內較穩定", w * .44, h * .84);
       }
 
       function drawBlanket(w, h) {
@@ -1303,7 +1422,8 @@
         const w = canvas.clientWidth;
         const h = canvas.clientHeight;
         const data = datasets[activeMode];
-        const maxDiff = Math.max(...data.rows.map(row => row.diff));
+        const rows = getAdjustedRows(data);
+        const maxDiff = Math.max(...rows.map(row => row.adjustedDiff));
         t += .035;
         ctx.clearRect(0, 0, w, h);
         ctx.fillStyle = "#f8fbfb";
@@ -1312,9 +1432,9 @@
         ctx.font = "900 15px Microsoft JhengHei, sans-serif";
         ctx.textAlign = "left";
         ctx.fillText(activeMode === "hot" ? "🔥 紅色箭頭越多，代表熱散失越快" : "🧊 箭頭越多，代表外界熱進入越快", 16, 28);
-        data.rows.forEach((row, index) => {
+        rows.forEach((row, index) => {
           const x = 70 + index * ((w - 140) / 3);
-          drawCup(x, 54 + Math.sin(t + index) * 3, row.label, row.diff, row.color, maxDiff);
+          drawCup(x, 54 + Math.sin(t + index) * 3, row.label, row.adjustedDiff, row.color, maxDiff);
         });
         animId = requestAnimationFrame(draw);
       }
@@ -1605,7 +1725,7 @@
     document.querySelector("#modeHot").addEventListener("click", () => setMode("hot"));
     document.querySelector("#modeCold").addEventListener("click", () => setMode("cold"));
     document.querySelector("#customMaterial").addEventListener("change", updateDesignFeedback);
-    document.querySelector("#layerInput").addEventListener("input", updateDesignFeedback);
+    document.querySelector("#layerInput").addEventListener("input", renderChart);
     document.querySelector("#principleMaterial").addEventListener("change", () => {
       if (document.body.dataset.activeTab === "sec-principle") animControllers["sec-principle"].start();
     });
