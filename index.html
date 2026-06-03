@@ -8,6 +8,7 @@
   <meta property="og:title" content="保溫杯探究互動教程">
   <meta property="og:description" content="比較棉布、鋁箔紙、厚紙板與對照組的保溫效果，並設計更薄、更有效的保溫裝置。">
   <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%8C%A1%EF%B8%8F%3C/text%3E%3C/svg%3E">
   <style>
     :root {
       --bg: #f4f7f4;
@@ -401,6 +402,11 @@
     }
     .mini strong { display: block; margin-bottom: 4px; }
     .mini p { margin-bottom: 0; color: var(--muted); font-size: 1.02rem; }
+    .principle-mini-canvas {
+      height: 86px;
+      margin: 6px 0;
+      background: #ffffff;
+    }
 
     .life-layout {
       display: grid;
@@ -760,9 +766,21 @@
             </label>
           </div>
           <div class="principle-grid">
-            <div class="mini"><strong>🤝 傳導</strong><p>熱沿著接觸的物質移動，材料越容易導熱，散熱越快。</p></div>
-            <div class="mini"><strong>💨 對流</strong><p>空氣或水流動會帶走熱量，蓋子與包覆能減少流動。</p></div>
-            <div class="mini"><strong>✨ 輻射</strong><p>物體會向外放出熱，亮面的鋁箔能反射一部分熱輻射。</p></div>
+            <div class="mini">
+              <strong>🤝 傳導</strong>
+              <canvas id="miniConductCanvas" class="principle-mini-canvas" width="260" height="100" aria-label="傳導微動畫"></canvas>
+              <p>熱沿著接觸的物質移動，材料越容易導熱，散熱越快。</p>
+            </div>
+            <div class="mini">
+              <strong>💨 對流</strong>
+              <canvas id="miniConvectionCanvas" class="principle-mini-canvas" width="260" height="100" aria-label="對流微動畫"></canvas>
+              <p>空氣或水流動會帶走熱量，蓋子與包覆能減少流動。</p>
+            </div>
+            <div class="mini">
+              <strong>✨ 輻射</strong>
+              <canvas id="miniRadiationCanvas" class="principle-mini-canvas" width="260" height="100" aria-label="輻射微動畫"></canvas>
+              <p>物體會向外放出熱，亮面的鋁箔能反射一部分熱輻射。</p>
+            </div>
           </div>
           <p id="principleText" class="result-note"></p>
         </article>
@@ -1098,67 +1116,186 @@
     (function () {
       const canvas = document.querySelector("#heatCanvas");
       const ctx = canvas.getContext("2d");
+      const miniCanvases = {
+        conduct: document.querySelector("#miniConductCanvas"),
+        convection: document.querySelector("#miniConvectionCanvas"),
+        radiation: document.querySelector("#miniRadiationCanvas")
+      };
+      const miniCtx = Object.fromEntries(Object.entries(miniCanvases).map(([key, item]) => [key, item.getContext("2d")]));
       let animId = 0;
       let t = 0;
 
-      function resizeCanvas() {
-        const rect = canvas.getBoundingClientRect();
+      function resizeCanvas(target, targetCtx, minH = 220) {
+        const rect = target.getBoundingClientRect();
         const ratio = window.devicePixelRatio || 1;
-        canvas.width = Math.max(320, Math.round(rect.width * ratio));
-        canvas.height = Math.max(260, Math.round(rect.height * ratio));
-        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        target.width = Math.max(260, Math.round(rect.width * ratio));
+        target.height = Math.max(minH, Math.round(rect.height * ratio));
+        targetCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
       }
 
-      function draw() {
-        resizeCanvas();
+      function heatColor(value) {
+        const hot = Math.max(0, Math.min(1, value));
+        return `rgb(${Math.round(66 + hot * 190)}, ${Math.round(118 - hot * 38)}, ${Math.round(168 - hot * 122)})`;
+      }
+
+      function drawParticles(c, x, y, width, height, progress, compact = false) {
+        const cols = compact ? 7 : 10;
+        const rows = compact ? 2 : 4;
+        for (let row = 0; row < rows; row += 1) {
+          for (let col = 0; col < cols; col += 1) {
+            const hotness = Math.max(0, 1 - col / (cols - 1) - progress * .15);
+            const px = x + (col + .5) * width / cols;
+            const py = y + (row + .5) * height / rows;
+            const shake = hotness * (compact ? 2.4 : 4.5);
+            c.fillStyle = heatColor(hotness);
+            c.beginPath();
+            c.arc(px + Math.sin(t * 6 + row + col) * shake, py + Math.cos(t * 5 + col) * shake, compact ? 4 : 5, 0, Math.PI * 2);
+            c.fill();
+          }
+        }
+      }
+
+      function drawConductionPanel(c, x, y, w, h, compact = false) {
+        const rodY = y + h * .45;
+        const rodH = h * .24;
+        const grad = c.createLinearGradient(x, 0, x + w, 0);
+        grad.addColorStop(0, "#d85d2a");
+        grad.addColorStop(.5, "#f2c14e");
+        grad.addColorStop(1, "#4f8fc0");
+        c.fillStyle = grad;
+        c.fillRect(x + w * .12, rodY, w * .76, rodH);
+        c.strokeStyle = "#1b463d";
+        c.lineWidth = compact ? 2 : 3;
+        c.strokeRect(x + w * .12, rodY, w * .76, rodH);
+        c.fillStyle = "#b5473d";
+        c.beginPath();
+        c.arc(x + w * .1, rodY + rodH / 2, compact ? 13 : 22, 0, Math.PI * 2);
+        c.fill();
+        drawParticles(c, x + w * .16, rodY + 4, w * .67, rodH - 8, (Math.sin(t) + 1) / 2, compact);
+        for (let i = 0; i < 3; i += 1) {
+          const p = (t * .35 + i * .28) % 1;
+          drawArrow(c, x + w * (.22 + p * .42), rodY - (compact ? 12 : 18), x + w * (.32 + p * .42), rodY - (compact ? 12 : 18), "#d85d2a", compact ? 2 : 3);
+        }
+        c.fillStyle = "#1c2420";
+        c.font = compact ? "800 13px Microsoft JhengHei, sans-serif" : "900 18px Microsoft JhengHei, sans-serif";
+        c.fillText("傳導：粒子碰撞，把熱往旁邊傳", x + 10, y + (compact ? 18 : 28));
+      }
+
+      function drawConvectionPanel(c, x, y, w, h, compact = false) {
+        const beakerX = x + w * .2;
+        const beakerY = y + h * .2;
+        const beakerW = w * .6;
+        const beakerH = h * .62;
+        c.fillStyle = "rgba(215,237,245,.88)";
+        c.fillRect(beakerX, beakerY, beakerW, beakerH);
+        c.strokeStyle = "#1b463d";
+        c.lineWidth = compact ? 2 : 3;
+        c.strokeRect(beakerX, beakerY, beakerW, beakerH);
+        c.fillStyle = "#d85d2a";
+        c.fillRect(beakerX + beakerW * .25, beakerY + beakerH + 4, beakerW * .5, compact ? 8 : 14);
+        const cx = beakerX + beakerW / 2;
+        const cy = beakerY + beakerH / 2;
+        const radiusX = beakerW * .32;
+        const radiusY = beakerH * .34;
+        for (let i = 0; i < 12; i += 1) {
+          const a = t * 1.4 + i * Math.PI / 6;
+          const px = cx + Math.cos(a) * radiusX;
+          const py = cy + Math.sin(a) * radiusY;
+          c.fillStyle = Math.sin(a) < 0 ? "#d85d2a" : "#2f6f9f";
+          c.beginPath();
+          c.arc(px, py, compact ? 3.5 : 5, 0, Math.PI * 2);
+          c.fill();
+        }
+        drawArrow(c, cx - radiusX, cy + radiusY * .45, cx - radiusX, cy - radiusY * .45, "#d85d2a", compact ? 2 : 3);
+        drawArrow(c, cx + radiusX, cy - radiusY * .45, cx + radiusX, cy + radiusY * .45, "#2f6f9f", compact ? 2 : 3);
+        c.fillStyle = "#1c2420";
+        c.font = compact ? "800 13px Microsoft JhengHei, sans-serif" : "900 18px Microsoft JhengHei, sans-serif";
+        c.fillText("對流：熱流體上升，冷流體下降", x + 10, y + (compact ? 18 : 28));
+      }
+
+      function drawRadiationPanel(c, x, y, w, h, compact = false) {
+        const cx = x + w * .5;
+        const cy = y + h * .52;
+        c.fillStyle = "#b5473d";
+        c.beginPath();
+        c.arc(cx, cy, compact ? 15 : 28, 0, Math.PI * 2);
+        c.fill();
+        for (let i = 0; i < 5; i += 1) {
+          const r = ((t * 44 + i * 28) % (compact ? 105 : 155)) + (compact ? 18 : 28);
+          c.strokeStyle = `rgba(216, 93, 42, ${1 - i * .14})`;
+          c.lineWidth = compact ? 2 : 3;
+          c.beginPath();
+          c.arc(cx, cy, r, 0, Math.PI * 2);
+          c.stroke();
+        }
+        c.strokeStyle = "#9ab7c9";
+        c.lineWidth = compact ? 5 : 8;
+        c.beginPath();
+        c.moveTo(x + w * .78, y + h * .22);
+        c.lineTo(x + w * .9, y + h * .8);
+        c.stroke();
+        for (let i = 0; i < 4; i += 1) {
+          const yy = y + h * (.3 + i * .14);
+          drawArrow(c, x + w * .72, yy, x + w * .54, yy + Math.sin(t * 4 + i) * 4, "#d85d2a", compact ? 2 : 3);
+        }
+        c.fillStyle = "#1c2420";
+        c.font = compact ? "800 13px Microsoft JhengHei, sans-serif" : "900 18px Microsoft JhengHei, sans-serif";
+        c.fillText("輻射：熱以波的形式向外散出", x + 10, y + (compact ? 18 : 28));
+      }
+
+      function drawMiniPrinciples() {
+        resizeCanvas(miniCanvases.conduct, miniCtx.conduct, 86);
+        resizeCanvas(miniCanvases.convection, miniCtx.convection, 86);
+        resizeCanvas(miniCanvases.radiation, miniCtx.radiation, 86);
+        const items = [
+          [miniCtx.conduct, miniCanvases.conduct, drawConductionPanel],
+          [miniCtx.convection, miniCanvases.convection, drawConvectionPanel],
+          [miniCtx.radiation, miniCanvases.radiation, drawRadiationPanel]
+        ];
+        items.forEach(([c, target, drawPanel]) => {
+          c.clearRect(0, 0, target.clientWidth, target.clientHeight);
+          c.fillStyle = "#fff";
+          c.fillRect(0, 0, target.clientWidth, target.clientHeight);
+          drawPanel(c, 6, 6, target.clientWidth - 12, target.clientHeight - 12, true);
+        });
+      }
+
+      function drawMainPrinciples() {
+        resizeCanvas(canvas, ctx, 260);
         const w = canvas.clientWidth;
         const h = canvas.clientHeight;
         const material = document.querySelector("#principleMaterial").value;
         const thickness = Number(document.querySelector("#thicknessInput").value);
         const strength = { none: 1, cardboard: .62, foil: .55, cotton: .38 }[material] / (1 + thickness * .09);
-        const cx = w * .5;
-        const top = h * .16;
-        const cupW = Math.min(170, w * .32);
-        const cupH = h * .52;
+        const gap = 10;
+        const panelW = (w - gap * 4) / 3;
         t += .018;
         ctx.clearRect(0, 0, w, h);
         ctx.fillStyle = "#f8fbfb";
         ctx.fillRect(0, 0, w, h);
-
-        ctx.fillStyle = "#d7edf5";
-        ctx.fillRect(cx - cupW / 2, top + cupH * .35, cupW, cupH * .52);
-        ctx.strokeStyle = "#1b463d";
-        ctx.lineWidth = 5;
-        ctx.strokeRect(cx - cupW / 2, top, cupW, cupH);
-        ctx.lineWidth = Math.max(8, thickness * 7);
-        ctx.strokeStyle = material === "none" ? "#cfd8d3" : material === "cotton" ? "#7dbb91" : material === "foil" ? "#9ab7c9" : "#c49a55";
-        ctx.strokeRect(cx - cupW / 2 - 22, top - 10, cupW + 44, cupH + 20);
-
-        ctx.fillStyle = "#b5473d";
-        ctx.font = "800 17px Microsoft JhengHei, sans-serif";
-        ctx.fillText("熱水", cx - 18, top + cupH * .65);
-        ctx.fillStyle = "#5f6f68";
-        ctx.fillText(materialLabels[material], 20, 30);
-
-        const arrows = 8;
-        for (let i = 0; i < arrows; i += 1) {
-          const phase = t + i * .75;
-          const side = i % 2 === 0 ? -1 : 1;
-          const y = top + 34 + (i % 4) * (cupH / 4);
-          const startX = cx + side * (cupW / 2 + 8);
-          const endX = startX + side * (42 + Math.sin(phase) * 14) * strength;
-          drawArrow(ctx, startX, y, endX, y + Math.sin(phase) * 6, "#b5473d", 2 + strength * 3);
-        }
-        for (let i = 0; i < 28; i += 1) {
-          const x = cx - cupW * .35 + (i % 7) * cupW * .12;
-          const y = top + cupH * .38 + ((i / 7) | 0) * 28 + Math.sin(t * 3 + i) * 4;
-          ctx.fillStyle = `rgba(181, 71, 61, ${.25 + strength * .35})`;
+        [
+          ["傳導", drawConductionPanel],
+          ["對流", drawConvectionPanel],
+          ["輻射", drawRadiationPanel]
+        ].forEach(([label, drawPanel], index) => {
+          const x = gap + index * (panelW + gap);
+          ctx.fillStyle = "#ffffff";
+          ctx.strokeStyle = "#d8e1dc";
+          ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.roundRect(x, 8, panelW, h - 16, 8);
           ctx.fill();
-        }
+          ctx.stroke();
+          drawPanel(ctx, x + 8, 16, panelW - 16, h - 32, false);
+        });
+        const lossText = strength < .42 ? "熱量被明顯減緩" : strength < .65 ? "熱量移動速度中等" : "熱量移動較快";
         document.querySelector("#principleText").textContent =
-          `目前模型顯示：${materialLabels[material]}外層厚度 ${thickness}，紅色箭頭越短代表熱量散失越慢。`;
+          `目前模型：${materialLabels[material]}外層厚度 ${thickness}，同時觀察傳導、對流、輻射；${lossText}。`;
+      }
+
+      function draw() {
+        drawMiniPrinciples();
+        drawMainPrinciples();
         animId = requestAnimationFrame(draw);
       }
 
