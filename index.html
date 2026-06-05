@@ -426,11 +426,53 @@
       padding: 8px 10px;
     }
     .canvas-wrap { min-width: 0; }
+    #sec-principle.active {
+      width: calc(100% - 24px);
+      max-width: none;
+    }
+    #sec-principle .layout {
+      grid-template-columns: minmax(520px, .9fr) minmax(0, 1.1fr);
+      gap: 14px;
+      height: 100%;
+    }
+    #sec-principle .card {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      padding: 12px;
+    }
+    #sec-principle .panel-title {
+      margin-bottom: 10px;
+    }
+    #sec-principle .panel-title h2 {
+      font-size: 2rem;
+      line-height: 1.32;
+    }
+    #sec-principle .control-row {
+      margin-bottom: 10px;
+    }
+    #sec-principle .field {
+      font-size: 1.15rem;
+      line-height: 1.25;
+    }
+    #sec-principle .field input,
+    #sec-principle .field select {
+      min-height: 46px;
+      font-size: 1.08rem;
+    }
     .principle-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       margin-top: 12px;
+    }
+    #sec-principle .principle-grid {
+      flex: 0 0 auto;
+      min-height: 0;
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(3, 102px);
+      gap: 8px;
+      margin-top: 4px;
     }
     .mini {
       padding: 10px;
@@ -440,10 +482,50 @@
     }
     .mini strong { display: block; margin-bottom: 4px; }
     .mini p { margin-bottom: 0; color: var(--muted); font-size: 1.02rem; }
+    #sec-principle .mini {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 210px;
+      grid-template-rows: auto 1fr;
+      column-gap: 14px;
+      row-gap: 4px;
+      align-items: center;
+      padding: 10px 12px;
+      min-height: 102px;
+    }
+    #sec-principle .mini strong {
+      margin-bottom: 0;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+    #sec-principle .mini p {
+      align-self: start;
+      font-size: 1.08rem;
+      line-height: 1.34;
+    }
     .principle-mini-canvas {
       height: 86px;
       margin: 6px 0;
       background: #ffffff;
+    }
+    #sec-principle .principle-mini-canvas {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      height: 92px;
+      margin: 0;
+    }
+    #sec-principle #principleText {
+      margin-top: 10px;
+      font-size: 1.15rem;
+      line-height: 1.38;
+    }
+    #sec-principle .canvas-wrap {
+      padding: 12px;
+    }
+    #sec-principle #heatCanvas {
+      flex: 1;
+      min-height: 0;
+      height: 100%;
+      background: #f8fbfb;
     }
 
     .life-layout {
@@ -660,6 +742,34 @@
       }
       .obj-grid, .principle-grid { grid-template-columns: repeat(2, 1fr); }
       .obs-bottom, .layout, .life-visual, .quiz-layout { grid-template-columns: 1fr; display: grid; }
+      #sec-principle.active {
+        width: min(100% - 18px, 1240px);
+        height: auto;
+        overflow: visible;
+      }
+      #sec-principle .layout {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      #sec-principle .card {
+        min-height: auto;
+      }
+      #sec-principle .principle-grid {
+        grid-template-rows: none;
+      }
+      #sec-principle .mini {
+        grid-template-columns: 1fr;
+        min-height: 0;
+      }
+      #sec-principle .principle-mini-canvas {
+        grid-column: 1;
+        grid-row: auto;
+        width: 100%;
+        height: 112px;
+      }
+      #sec-principle #heatCanvas {
+        height: 360px;
+      }
       .life-layout { grid-template-columns: 1fr; min-height: 0; }
       .life-tab-list { min-height: 250px; }
     }
@@ -1741,7 +1851,7 @@
           drawArrow(c, x + w * (.22 + p * .42), rodY - (compact ? 12 : 18), x + w * (.32 + p * .42), rodY - (compact ? 12 : 18), "#d85d2a", compact ? 2 : 3);
         }
         c.fillStyle = "#1c2420";
-        c.font = compact ? "800 13px Microsoft JhengHei, sans-serif" : "900 18px Microsoft JhengHei, sans-serif";
+        c.font = compact ? "800 13px Microsoft JhengHei, sans-serif" : "900 21px Microsoft JhengHei, sans-serif";
         c.fillText("傳導：粒子碰撞，把熱往旁邊傳", x + 10, y + (compact ? 18 : 28));
       }
 
@@ -1773,7 +1883,7 @@
         drawArrow(c, cx - radiusX, cy + radiusY * .45, cx - radiusX, cy - radiusY * .45, "#d85d2a", compact ? 2 : 3);
         drawArrow(c, cx + radiusX, cy - radiusY * .45, cx + radiusX, cy + radiusY * .45, "#2f6f9f", compact ? 2 : 3);
         c.fillStyle = "#1c2420";
-        c.font = compact ? "800 13px Microsoft JhengHei, sans-serif" : "900 18px Microsoft JhengHei, sans-serif";
+        c.font = compact ? "800 13px Microsoft JhengHei, sans-serif" : "900 21px Microsoft JhengHei, sans-serif";
         c.fillText("對流：熱流體上升，冷流體下降", x + 10, y + (compact ? 18 : 28));
       }
 
@@ -1803,7 +1913,7 @@
           drawArrow(c, x + w * .72, yy, x + w * .54, yy + Math.sin(t * 4 + i) * 4, "#d85d2a", compact ? 2 : 3);
         }
         c.fillStyle = "#1c2420";
-        c.font = compact ? "800 13px Microsoft JhengHei, sans-serif" : "900 18px Microsoft JhengHei, sans-serif";
+        c.font = compact ? "800 13px Microsoft JhengHei, sans-serif" : "900 21px Microsoft JhengHei, sans-serif";
         c.fillText("輻射：熱以波的形式向外散出", x + 10, y + (compact ? 18 : 28));
       }
 
